@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <style>
+        body {
+            font-family: system-ui, -apple-system, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background: #f5f5f5;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            color: #1a1a1a;
+        }
+
+        .wrapped-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        .wrapped-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+            transition: transform 0.2s;
+        }
+
+        .wrapped-card:hover {
+            transform: translateY(-5px);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .week-label {
+            font-size: 1.2em;
+            font-weight: bold;
+            color: #1a1a1a;
+        }
+
+        .date {
+            color: #666;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            background: #f8f8f8;
+            padding: 12px;
+            border-radius: 8px;
+        }
+
+        .stat-label {
+            font-size: 0.9em;
+            color: #666;
+            margin-bottom: 5px;
+        }
+
+        .stat-value {
+            font-weight: 600;
+            color: #1a1a1a;
+        }
+
+        .collaborator {
+            display: flex;
+            align-items: center;
+            margin-top: 15px;
+            padding: 10px;
+            background: #f0f0f0;
+            border-radius: 8px;
+        }
+
+        .profile-pic {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #ddd;
+            margin-right: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="header">
+        <h1>Your Wrapped History</h1>
+        <p>See how your music taste evolved week by week</p>
+    </div>
+
+    <div class="wrapped-grid">
+        <!-- Week 1 -->
+        <div class="wrapped-card">
+            <div class="card-header">
+                <span class="week-label">Week 42</span>
+                <span class="date">Oct 14 - Oct 20</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Top Genre</div>
+                    <div class="stat-value">Indie Pop</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Listening Time</div>
+                    <div class="stat-value">24h 30m</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Top Artist</div>
+                    <div class="stat-value">The 1975</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Mood</div>
+                    <div class="stat-value">Energetic</div>
+                </div>
+            </div>
+            <div class="collaborator">
+                <div class="profile-pic"></div>
+                <div>
+                    <div class="stat-label">Wrapped with</div>
+                    <div class="stat-value">Sarah Wilson</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Week 2 -->
+        <div class="wrapped-card">
+            <div class="card-header">
+                <span class="week-label">Week 41</span>
+                <span class="date">Oct 7 - Oct 13</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Top Genre</div>
+                    <div class="stat-value">Alternative Rock</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Listening Time</div>
+                    <div class="stat-value">18h 45m</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Top Artist</div>
+                    <div class="stat-value">Arctic Monkeys</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Mood</div>
+                    <div class="stat-value">Melancholic</div>
+                </div>
+            </div>
+            <div class="collaborator">
+                <div class="profile-pic"></div>
+                <div>
+                    <div class="stat-label">Wrapped with</div>
+                    <div class="stat-value">Alex Chen</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Week 3 -->
+        <div class="wrapped-card">
+            <div class="card-header">
+                <span class="week-label">Week 40</span>
+                <span class="date">Sep 30 - Oct 6</span>
+            </div>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <div class="stat-label">Top Genre</div>
+                    <div class="stat-value">Pop</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Listening Time</div>
+                    <div class="stat-value">22h 15m</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Top Artist</div>
+                    <div class="stat-value">Taylor Swift</div>
+                </div>
+                <div class="stat-item">
+                    <div class="stat-label">Mood</div>
+                    <div class="stat-value">Happy</div>
+                </div>
+            </div>
+            <div class="collaborator">
+                <div class="profile-pic"></div>
+                <div>
+                    <div class="stat-label">Wrapped with</div>
+                    <div class="stat-value">Emma Thompson</div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
