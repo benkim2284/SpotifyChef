@@ -5,7 +5,11 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="dc3e47b0-a95b-446d-ba27-6c7877542f44" name="Changes" comment="">
+      <change afterPath="$PROJECT_DIR$/SpotifyWrappedApp/templates/SpotifyWrappedApp/login.html" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/SpotifyWrappedApp/urls.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SpotifyChef/urls.py" beforeDir="false" afterPath="$PROJECT_DIR$/SpotifyChef/urls.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/SpotifyWrappedApp/views.py" beforeDir="false" afterPath="$PROJECT_DIR$/SpotifyWrappedApp/views.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -15,9 +19,9 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
   </component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 7
-}]]></component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 7
+}</component>
   <component name="ProjectId" id="2o7gMqYFd4L3fjZVMC5DafT2ftW" />
   <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
   <component name="ProjectViewState">
@@ -26,9 +30,10 @@
   </component>
   <component name="PropertiesComponent"><![CDATA[{
   "keyToString": {
+    "Django Server.SpotifyChef.executor": "Run",
     "RunOnceActivity.OpenDjangoStructureViewOnStart": "true",
     "RunOnceActivity.ShowReadmeOnStart": "true",
-    "git-widget-placeholder": "main",
+    "git-widget-placeholder": "api__test",
     "node.js.detected.package.eslint": "true",
     "node.js.detected.package.tslint": "true",
     "node.js.selected.package.eslint": "(autodetect)",
@@ -38,6 +43,31 @@
   }
 }]]></component>
   <component name="RunManager">
+    <configuration name="SpotifyChef" type="Python.DjangoServer" factoryName="Django server">
+      <module name="SpotifyChef" />
+      <option name="ENV_FILES" value="" />
+      <option name="INTERPRETER_OPTIONS" value="" />
+      <option name="PARENT_ENVS" value="true" />
+      <envs>
+        <env name="PYTHONUNBUFFERED" value="1" />
+        <env name="DJANGO_SETTINGS_MODULE" value="SpotifyChef.settings" />
+      </envs>
+      <option name="SDK_HOME" value="" />
+      <option name="WORKING_DIRECTORY" value="" />
+      <option name="IS_MODULE_SDK" value="false" />
+      <option name="ADD_CONTENT_ROOTS" value="true" />
+      <option name="ADD_SOURCE_ROOTS" value="true" />
+      <option name="launchJavascriptDebuger" value="false" />
+      <option name="port" value="8000" />
+      <option name="host" value="localhost" />
+      <option name="additionalOptions" value="" />
+      <option name="browserUrl" value="" />
+      <option name="runTestServer" value="false" />
+      <option name="runNoReload" value="false" />
+      <option name="useCustomRunCommand" value="false" />
+      <option name="customRunCommand" value="" />
+      <method v="2" />
+    </configuration>
     <configuration name="SpotifyChef" type="Python.DjangoServer" factoryName="Django server">
       <module name="SpotifyChef" />
       <option name="ENV_FILES" value="" />
@@ -80,6 +110,7 @@
       <option name="presentableId" value="Default" />
       <updated>1730225982945</updated>
       <workItem from="1730225987541" duration="482000" />
+      <workItem from="1730226476236" duration="3834000" />
     </task>
     <servers />
   </component>
