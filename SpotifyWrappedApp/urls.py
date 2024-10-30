@@ -5,5 +5,8 @@ app_name = "SpotifyWrappedApp"
 
 
 urlpatterns = [
-    path("", views.login_view, name="login"),
+    path("login/", views.login_view, name="login"),
+    path("home/", views.home_view, name="home"),
+    path("oauth_screen/", views.oauth_view, name="oauth_screen"),
+    path('logout/', views.logout_view, name='logout'),
 ]

@@ -56,29 +56,12 @@
             <button type="submit" class="btn btn-primary w-100">Login</button>
         </form>
 
+        <div class="text-center mt-3">
+            <a href="{% url 'SpotifyWrappedApp:oauth_screen' %}" class="btn btn-success w-100">
+                Login with Spotify
+            </a>
+        </div>
+
     </div>
-    <script>
-        const callSpotify = () => {
-            url = '/SpotifyWrappedApp/api/oauth_screen/';
-
-            fetch(url, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify(data)
-            })
-            .then(response => response.json())
-            .then(data => {
-                if (data.message) {
-                    updateFavoritesList();
-                } else if (data.error) {
-                    alert('Error: ' + data.error);
-                }
-            })
-            .catch(error => console.error('Error:', error));
-        };
-
-    </script>
 </body>
 </html>
