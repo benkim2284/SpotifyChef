@@ -3,7 +3,11 @@ from django.http import HttpResponseBadRequest
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from django.urls import reverse
+import os
+from dotenv import load_dotenv
+import openai
 
+load_dotenv(dotenv_path='.env')
 # Create your views here.
 def login_view(request):
 
@@ -12,10 +16,10 @@ def login_view(request):
 def oauth_view(request):
     # Start Spotify OAuth authorization
     sp_oauth = SpotifyOAuth(
-        client_id="9833aa7522aa4d8a83682c3acc925ab5",
-        client_secret="a6d9a3ee02e644ba83ff34c368001d42",
+        client_id=os.getenv('client_id'),
+        client_secret=os.getenv('client_secret'),
         redirect_uri="http://localhost:8000/SpotifyWrappedApp/home",
-        scope = "user-library-read"
+        scope = "user-library-read user-top-read"
     )
 
     # Redirect to Spotify authorization URL
@@ -24,10 +28,10 @@ def oauth_view(request):
 
 def home_view(request):
     sp_oauth = SpotifyOAuth(
-        client_id="9833aa7522aa4d8a83682c3acc925ab5",
-        client_secret="a6d9a3ee02e644ba83ff34c368001d42",
+        client_id=os.getenv('client_id'),
+        client_secret=os.getenv('client_secret'),
         redirect_uri="http://localhost:8000/SpotifyWrappedApp/home",
-        scope = "user-library-read"
+        scope = "user-library-read user-top-read"
     )
 
     # Check if there's a 'code' parameter in the request
@@ -50,13 +54,40 @@ def home_view(request):
     # Create a Spotify client with the obtained token
     sp = Spotify(auth=token_info['access_token'])
 
-    # Fetch artist albums
-    taylor_uri = 'spotify:artist:3TVXtAsR1Inumwj472S9r4'
-    results = sp.artist_top_tracks(taylor_uri)
-    top_tracks = results['tracks']
 
-    # Render album names to the template
-    return render(request, 'SpotifyWrappedApp/home.html', {'albums': top_tracks})
+    results = sp.current_user_top_tracks()
+    print(results['items'][0])
+
+    top_tracks = []
+
+    for item in results['items']:
+        track_info = {
+            'name': item['name'],
+            'artist': item['artists'][0]['name'],  # Primary artist
+            'album': item['album']['name'],
+            'image_url': item['album']['images'][0]['url'],
+            'release_date': item['album']['release_date'],
+            'popularity': item['popularity'],
+            'preview_url': item['preview_url'],
+            'track_url': item['external_urls']['spotify']
+        }
+        top_tracks.append(track_info)
+
+    openai.api_key = os.getenv('OPENAI_API_KEY')
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[
+            {"role": "user", "content": f"Given my top played songs in spotify, give me a 8-part distinct \
+        summary of my music taste, and make it creative {top_tracks}"}
+        ],
+        temperature=0.7  # Adjust temperature as needed
+    )
+
+    # Extract and print the response content
+    reply = response["choices"][0]["message"]["content"]
+
+    return render(request, 'SpotifyWrappedApp/home.html', {'albums': top_tracks, "analysis": reply})
 
 # New log-out view
 def logout_view(request):
