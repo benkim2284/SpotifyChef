@@ -1,0 +1,135 @@
+<!-- home.html -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Spotify Albums</title>
+    <style>
+        /* Spotify-inspired styling */
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: #ffffff;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        a {
+            color: #1DB954;
+            text-decoration: none;
+            font-weight: bold;
+            margin-top: 20px;
+        }
+
+        h1 {
+            font-size: 2em;
+            font-weight: bold;
+            color: #1DB954;
+            margin: 20px 0;
+        }
+
+        .analysis-container {
+            background-color: #1a1a1a;
+            padding: 20px;
+            border-radius: 8px;
+            width: 90%;
+            max-width: 600px;
+            margin-bottom: 30px;
+        }
+
+        .analysis-container h2 {
+            font-size: 1.5em;
+            font-weight: bold;
+            color: #1DB954;
+        }
+
+        .album-list {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 20px;
+            width: 90%;
+            max-width: 1200px;
+        }
+
+        .album-card {
+            background-color: #1a1a1a;
+            padding: 15px;
+            border-radius: 8px;
+            transition: transform 0.2s ease-in-out;
+        }
+
+        .album-card:hover {
+            transform: scale(1.05);
+        }
+
+        .album-info {
+            margin-top: 10px;
+            line-height: 1.6;
+        }
+
+        .album-info h3, .album-info h4 {
+            margin: 0;
+            font-size: 1.1em;
+        }
+
+        .album-info p {
+            color: #b3b3b3;
+            font-size: 0.9em;
+            margin: 5px 0;
+        }
+
+        .album-link, .preview-link {
+            display: inline-block;
+            color: #1DB954;
+            font-size: 0.9em;
+            text-decoration: none;
+            margin-top: 10px;
+        }
+
+        .album-link:hover, .preview-link:hover {
+            text-decoration: underline;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Logout Link -->
+    <a href="{% url 'SpotifyWrappedApp:logout' %}">Logout</a>
+
+    <!-- Page Title -->
+    <h1>My Top Hits</h1>
+
+    <!-- Analysis Section -->
+    <div class="analysis-container">
+        <h2>Analysis:</h2>
+        <p style="white-space: pre-wrap;">{{ analysis }}</p>
+    </div>
+
+    <!-- Album List -->
+    <div class="album-list">
+        {% for album in albums %}
+            <div class="album-card">
+                <!-- Album Art (Use a placeholder or actual album art URL if available) -->
+                <img src="{{ album.image_url }}" alt="Album Art" style="width: 100%; border-radius: 8px;">
+
+                <div class="album-info">
+                    <h3>{{ album.name }}</h3>
+                    <h4>{{ album.artist }}</h4>
+                    <p><strong>Album:</strong> {{ album.album }}</p>
+                    <p><strong>Released:</strong> {{ album.release_date }}</p>
+                    <p><strong>Popularity:</strong> {{ album.popularity }}</p>
+                    <!-- Preview and Track Links -->
+                    {% if album.preview_url %}
+                        <a href="{{ album.preview_url }}" class="preview-link" target="_blank">Listen Preview</a>
+                    {% endif %}
+                    <a href="{{ album.track_url }}" class="album-link" target="_blank">View on Spotify</a>
+                </div>
+            </div>
+        {% endfor %}
+    </div>
+</body>
+</html>
