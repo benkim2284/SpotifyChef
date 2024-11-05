@@ -56,20 +56,21 @@ def home_view(request):
 
 
     results = sp.current_user_top_tracks()
+
     print(results['items'][0])
 
     top_tracks = []
 
-    for item in results['items']:
+    for track_stuff in results['items']:
         track_info = {
-            'name': item['name'],
-            'artist': item['artists'][0]['name'],  # Primary artist
-            'album': item['album']['name'],
-            'image_url': item['album']['images'][0]['url'],
-            'release_date': item['album']['release_date'],
-            'popularity': item['popularity'],
-            'preview_url': item['preview_url'],
-            'track_url': item['external_urls']['spotify']
+            'name': track_stuff['name'],
+            'artist': track_stuff['artists'][0]['name'],  # Primary artist
+            'album': track_stuff['album']['name'],
+            'image_url': track_stuff['album']['images'][0]['url'],
+            'release_date': track_stuff['album']['release_date'],
+            'popularity': track_stuff['popularity'],
+            'preview_url': track_stuff['preview_url'],
+            'track_url': track_stuff['external_urls']['spotify']
         }
         top_tracks.append(track_info)
 
@@ -92,7 +93,6 @@ def home_view(request):
 # New log-out view
 def logout_view(request):
     # Remove the access token from the session
-    # logout_url = "https://accounts.spotify.com/en/logout"
-    # redirect_url = f"{logout_url}?continue={request.build_absolute_uri(reverse('SpotifyWrappedApp:oauth_screen'))}"
-    # redirect_url
-    return redirect(reverse('SpotifyWrappedApp:login'))
+    logout_url = "https://accounts.spotify.com/en/logout"
+    redirect_url = f"{logout_url}?continue={request.build_absolute_uri(reverse('SpotifyWrappedApp:oauth_screen'))}"
+    return redirect(redirect_url)
