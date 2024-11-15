@@ -16,8 +16,9 @@
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.5;
-            padding: 1rem;
-            background-color: #f5f5f5;
+            padding: 2rem;
+            background-color: #121212;
+            color: white;
         }
 
         .space-y-8 > * + * {
@@ -26,21 +27,22 @@
 
         /* Card styles */
         .card {
-            background: white;
-            border-radius: 0.5rem;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            background: #1c1c1c;
+            border-radius: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             overflow: hidden;
             width: 100%;
         }
 
         .card-header {
             padding: 1.5rem;
-            border-bottom: 1px solid #eee;
+            border-bottom: 1px solid #333;
         }
 
         .card-title {
-            font-size: 1.25rem;
+            font-size: 1.5rem;
             font-weight: bold;
+            color: #1DB954;
         }
 
         .card-content {
@@ -53,16 +55,17 @@
 
         /* Landing page styles */
         .hero-section {
-            height: 10rem;
-            background: linear-gradient(to right, #4ade80, #3b82f6);
+            height: 12rem;
+            background: linear-gradient(to right, #1DB954, #191414);
             display: flex;
             justify-content: center;
             align-items: center;
-            border-radius: 0.5rem;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
         }
 
         .hero-title {
-            font-size: 2.25rem;
+            font-size: 3rem;
             font-weight: bold;
             color: white;
         }
@@ -75,22 +78,23 @@
         }
 
         .button {
-            padding: 0.5rem 1rem;
-            border-radius: 0.25rem;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
             font-weight: 500;
             cursor: pointer;
             border: none;
+            text-transform: uppercase;
         }
 
         .button-primary {
-            background-color: #3b82f6;
+            background-color: #1DB954;
             color: white;
         }
 
         .button-outline {
             background-color: transparent;
-            border: 1px solid #3b82f6;
-            color: #3b82f6;
+            border: 1px solid #1DB954;
+            color: #1DB954;
         }
 
         /* Dashboard grid */
@@ -115,6 +119,9 @@
         .dashboard-card {
             padding: 1rem;
             text-align: center;
+            background-color: #333;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
         }
 
         .icon {
@@ -124,12 +131,16 @@
             display: inline-block;
         }
 
+        .font-bold {
+            font-weight: 700;
+        }
+
         /* Wrapped presentation */
         .presentation-container {
             position: relative;
             height: 24rem;
-            background: linear-gradient(to right, #a855f7, #ec4899);
-            border-radius: 0.5rem;
+            background: linear-gradient(to right, #1DB954, #191414);
+            border-radius: 1rem;
         }
 
         .presentation-content {
@@ -166,6 +177,7 @@
 
         .stats-container {
             padding: 1rem;
+            background-color: #333;
             border-radius: 0.5rem;
         }
 
@@ -176,45 +188,86 @@
         }
 
         /* Holiday themes */
+        /* Holiday themes */
+        /* Holiday themes */
         .holiday-grid {
             display: grid;
             grid-template-columns: repeat(2, 1fr);
             gap: 1rem;
+            margin-top: 2rem;
         }
 
         .holiday-card {
-            padding: 1rem;
-            border-radius: 0.5rem;
+            padding: 1.5rem;
+            border-radius: 0.75rem;
             text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .holiday-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
         }
 
         .halloween {
-            background-color: #ffedd5;
+            background: linear-gradient(135deg, #ff7a00, #ffcc00);
+            color: white;
+            background-size: 200% 200%;
+            animation: halloweenGlow 1.5s infinite alternate;
+            position: relative;
+        }
+
+        .halloween h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
         .christmas {
-            background-color: #fee2e2;
+            background: linear-gradient(135deg, #ff0000, #00b300);
+            color: white;
+            background-size: 200% 200%;
+            animation: christmasGlow 1.5s infinite alternate;
+            position: relative;
         }
+
+        .christmas h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* Glow animation for Halloween */
+        @keyframes halloweenGlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Glow animation for Christmas */
+        @keyframes christmasGlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
     </style>
 </head>
 <body>
     <div class="space-y-8">
-        <!-- Landing Page -->
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Landing Page</h2>
-            </div>
-            <div class="card-content space-y-4">
-                <div class="hero-section">
-                    <h1 class="hero-title">Your Year in Music</h1>
-                </div>
-                <div class="button-container">
-                    <button class="button button-primary">Login with Spotify</button>
-                    <button class="button button-outline">Register</button>
-                </div>
-            </div>
-        </div>
-
         <!-- Dashboard -->
         <div class="card">
             <div class="card-header">
@@ -242,28 +295,6 @@
             </div>
         </div>
 
-        <!-- Wrapped Presentation -->
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Wrapped Presentation</h2>
-            </div>
-            <div class="card-content">
-                <div class="presentation-container">
-                    <div class="presentation-content">
-                        <div class="text-center text-white space-y-4">
-                            <h2 class="text-3xl font-bold">Your 2024 Wrapped</h2>
-                            <p class="text-xl">Slide 1 of 8</p>
-                            <div class="slide-indicators">
-                                <div class="indicator"></div>
-                                <div class="indicator inactive"></div>
-                                <div class="indicator inactive"></div>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-
         <!-- Duo-Wrapped -->
         <div class="card">
             <div class="card-header">
@@ -271,20 +302,21 @@
             </div>
             <div class="card-content">
                 <div class="duo-grid">
-                    <div class="stats-container" style="background-color: #f3e8ff;">
+                    <div class="stats-container" style="background-color: #333;">
                         <h3 class="font-bold">Your Stats</h3>
-                        <div class="stats-bar" style="width: 75%; background-color: #e9d5ff;"></div>
-                        <div class="stats-bar" style="width: 50%; background-color: #e9d5ff;"></div>
+                        <div class="stats-bar" style="width: 75%; background-color: #1DB954;"></div>
+                        <div class="stats-bar" style="width: 50%; background-color: #1DB954;"></div>
                     </div>
-                    <div class="stats-container" style="background-color: #dbeafe;">
+                    <div class="stats-container" style="background-color: #333;">
                         <h3 class="font-bold">Friend's Stats</h3>
-                        <div class="stats-bar" style="width: 66%; background-color: #bfdbfe;"></div>
-                        <div class="stats-bar" style="width: 80%; background-color: #bfdbfe;"></div>
+                        <div class="stats-bar" style="width: 66%; background-color: #1DB954;"></div>
+                        <div class="stats-bar" style="width: 80%; background-color: #1DB954;"></div>
                     </div>
                 </div>
             </div>
         </div>
 
+        <!-- Holiday Themes -->
         <!-- Holiday Themes -->
         <div class="card">
             <div class="card-header">
@@ -293,12 +325,12 @@
             <div class="card-content">
                 <div class="holiday-grid">
                     <div class="card holiday-card halloween">
-                        <i class="icon fas fa-calendar text-orange-500"></i>
-                        <h3 class="font-bold">Halloween Wrapped</h3>
+                        <div class="emoji">🎃</div>
+                        <h3 class="holiday-title">Halloween</h3>
                     </div>
                     <div class="card holiday-card christmas">
-                        <i class="icon fas fa-calendar text-red-500"></i>
-                        <h3 class="font-bold">Christmas Wrapped</h3>
+                        <div class="emoji">🎄</div>
+                        <h3 class="holiday-title">Christmas</h3>
                     </div>
                 </div>
             </div>

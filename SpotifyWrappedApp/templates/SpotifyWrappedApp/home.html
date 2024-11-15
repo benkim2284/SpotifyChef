@@ -1,135 +1,475 @@
-<!-- home.html -->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Spotify Albums</title>
+    <title>Spotify Wrapped</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
-        /* Spotify-inspired styling */
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #121212;
-            color: #ffffff;
+        /* Reset and base styles */
+        * {
             margin: 0;
             padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
+            box-sizing: border-box;
         }
 
-        a {
-            color: #1DB954;
-            text-decoration: none;
-            font-weight: bold;
-            margin-top: 20px;
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            line-height: 1.5;
+            padding: 2rem;
+            background-color: #121212;
+            color: white;
         }
 
-        h1 {
-            font-size: 2em;
-            font-weight: bold;
-            color: #1DB954;
-            margin: 20px 0;
+        .space-y-8 > * + * {
+            margin-top: 2rem;
         }
 
-        .analysis-container {
-            background-color: #1a1a1a;
-            padding: 20px;
-            border-radius: 8px;
-            width: 90%;
-            max-width: 600px;
-            margin-bottom: 30px;
+        .welcome-section {
+            text-align: center;
+            padding: 1.5rem;
+            background-color: #282828;
+            border-radius: 1rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
         }
 
-        .analysis-container h2 {
-            font-size: 1.5em;
-            font-weight: bold;
-            color: #1DB954;
-        }
-
-        .album-list {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
-            gap: 20px;
-            width: 90%;
-            max-width: 1200px;
-        }
-
-        .album-card {
-            background-color: #1a1a1a;
-            padding: 15px;
-            border-radius: 8px;
-            transition: transform 0.2s ease-in-out;
-        }
-
-        .album-card:hover {
-            transform: scale(1.05);
-        }
-
-        .album-info {
-            margin-top: 10px;
-            line-height: 1.6;
-        }
-
-        .album-info h3, .album-info h4 {
+        .welcome-message {
+            font-size: 3rem;
+            font-weight: 800;
             margin: 0;
-            font-size: 1.1em;
+            color: #1DB954; /* Spotify green */
         }
 
-        .album-info p {
+        .welcome-subtitle {
+            font-size: 1rem;
+            margin-top: 0.5rem;
             color: #b3b3b3;
-            font-size: 0.9em;
-            margin: 5px 0;
         }
 
-        .album-link, .preview-link {
-            display: inline-block;
+        #user-name {
+            color: #1ED760; /* Slightly brighter green for the name */
+        }
+
+        /* Card styles */
+        .card {
+            background: #1c1c1c;
+            border-radius: 1rem;
+            box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+            overflow: hidden;
+            width: 100%;
+        }
+
+        .card-header {
+            padding: 1.5rem;
+            border-bottom: 1px solid #333;
+        }
+
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: bold;
             color: #1DB954;
-            font-size: 0.9em;
-            text-decoration: none;
-            margin-top: 10px;
         }
 
-        .album-link:hover, .preview-link:hover {
-            text-decoration: underline;
+        .card-content {
+            padding: 1.5rem;
         }
+
+        .space-y-4 > * + * {
+            margin-top: 1rem;
+        }
+
+        /* Landing page styles */
+        .hero-section {
+            height: 12rem;
+            background: linear-gradient(to right, #1DB954, #191414);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: white;
+        }
+
+        /* Button styles */
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            text-transform: uppercase;
+        }
+
+        .button-primary {
+            background-color: #1DB954;
+            color: white;
+        }
+
+        .button-outline {
+            background-color: transparent;
+            border: 1px solid #1DB954;
+            color: #1DB954;
+        }
+
+        /* Dashboard grid */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(1, 1fr);
+            gap: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+        }
+
+        @media (min-width: 1024px) {
+            .dashboard-grid {
+                grid-template-columns: repeat(4, 1fr);
+            }
+        }
+
+        .dashboard-card {
+            padding: 1rem;
+            text-align: center;
+            background-color: #333;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .dashboard-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+        }
+
+        .icon {
+            width: 2rem;
+            height: 2rem;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+        }
+
+        .font-bold {
+            font-weight: 700;
+        }
+
+        /* Wrapped presentation */
+        .presentation-container {
+            position: relative;
+            height: 24rem;
+            background: linear-gradient(to right, #1DB954, #191414);
+            border-radius: 1rem;
+        }
+
+        .presentation-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-indicators {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .indicator {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 9999px;
+            background-color: white;
+        }
+
+        .indicator.inactive {
+            opacity: 0.5;
+        }
+
+        /* Duo-wrapped */
+        .duo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
+        .stats-container {
+            padding: 1rem;
+            background-color: #333;
+            border-radius: 0.5rem;
+        }
+
+        .stats-bar {
+            height: 1rem;
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
+        }
+
+        /* Holiday themes */
+        /* Holiday themes */
+        /* Holiday themes */
+        .holiday-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+            margin-top: 2rem;
+        }
+
+        .holiday-card {
+            padding: 1.5rem;
+            border-radius: 0.75rem;
+            text-align: center;
+            box-shadow: 0 4px 8px rgba(0,0,0,0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .holiday-card:hover {
+            transform: translateY(-8px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.2);
+        }
+
+        .emoji {
+            font-size: 2.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .halloween {
+            background: linear-gradient(135deg, #ff7a00, #ffcc00);
+            color: white;
+            background-size: 200% 200%;
+            animation: halloweenGlow 1.5s infinite alternate;
+            position: relative;
+        }
+
+        .halloween h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        .christmas {
+            background: linear-gradient(135deg, #ff0000, #00b300);
+            color: white;
+            background-size: 200% 200%;
+            animation: christmasGlow 1.5s infinite alternate;
+            position: relative;
+        }
+
+        .christmas h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
+        /* Glow animation for Halloween */
+        @keyframes halloweenGlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Glow animation for Christmas */
+        @keyframes christmasGlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        .stats-container {
+            background-color: #2a2a2a;
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            padding: 1rem;
+            overflow-y: auto;
+            max-height: 300px;
+            transition: background-color 0.3s ease;
+        }
+
+        .stats-container:hover {
+            background-color: #333;
+        }
+
+        /* Link styles */
+        .past-wrap-link, .past-duo-wrap-link {
+            display: block;
+            padding: 0.8rem 1rem;
+            font-size: 1rem;
+            font-weight: 500;
+            text-decoration: none;
+            color: #fff;
+            background-color: #1c1c1c;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            transition: background-color 0.3s ease, color 0.3s ease;
+        }
+
+        .past-wrap-link:hover, .past-duo-wrap-link:hover {
+            background-color: #1DB954;
+            color: #000;
+        }
+
+        .past-wrap-link:active, .past-duo-wrap-link:active {
+            background-color: #14833b;
+        }
+
+        /* Title styles */
+        .stats-container h3 {
+            font-size: 1.25rem;
+            font-weight: bold;
+            margin-bottom: 1rem;
+            color: #1DB954;
+        }
+
+        /* Scrollbar styles */
+        .stats-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .stats-container::-webkit-scrollbar-thumb {
+            background-color: #1DB954;
+            border-radius: 8px;
+        }
+
+        .stats-container::-webkit-scrollbar-thumb:hover {
+            background-color: #14833b;
+        }
+
+        .stats-container::-webkit-scrollbar-track {
+            background-color: #1c1c1c;
+        }
+
+        .no-wraps-message {
+            font-size: 1.1rem;
+            color: #ccc;
+            font-weight: 700;
+        }
+
     </style>
 </head>
+<script>
+    function generateNewWrap() {
+
+    }
+
+    function showPastWraps() {
+
+    }
+
+    function showDuoWrapped() {
+
+    }
+
+    function showSettings() {
+
+    }
+
+</script>
 <body>
-
-    <!-- Logout Link -->
-    <a href="{% url 'SpotifyWrappedApp:logout' %}">Logout</a>
-
-    <!-- Page Title -->
-    <h1>My Top Hits</h1>
-
-    <!-- Analysis Section -->
-    <div class="analysis-container">
-        <h2>Analysis:</h2>
-        <p style="white-space: pre-wrap;">{{ analysis }}</p>
+     <div class="welcome-section">
+        <h1 class="welcome-message">Welcome, <span id="user-name">{{ name }}</span>!</h1>
     </div>
-
-    <!-- Album List -->
-    <div class="album-list">
-        {% for album in albums %}
-            <div class="album-card">
-                <!-- Album Art (Use a placeholder or actual album art URL if available) -->
-                <img src="{{ album.image_url }}" alt="Album Art" style="width: 100%; border-radius: 8px;">
-
-                <div class="album-info">
-                    <h3>{{ album.name }}</h3>
-                    <h4>{{ album.artist }}</h4>
-                    <p><strong>Album:</strong> {{ album.album }}</p>
-                    <p><strong>Released:</strong> {{ album.release_date }}</p>
-                    <p><strong>Popularity:</strong> {{ album.popularity }}</p>
-                    <!-- Preview and Track Links -->
-                    {% if album.preview_url %}
-                        <a href="{{ album.preview_url }}" class="preview-link" target="_blank">Listen Preview</a>
-                    {% endif %}
-                    <a href="{{ album.track_url }}" class="album-link" target="_blank">View on Spotify</a>
+    <div class="space-y-8">
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Dashboard</h2>
+            </div>
+            <div class="card-content">
+                <div class="dashboard-grid">
+                    <div class="card dashboard-card" onclick="generateNewWrap()">
+                        <i class="icon fas fa-music"></i>
+                        <h3 class="font-bold">Generate New Wrap</h3>
+                    </div>
+                    <div class="card dashboard-card" onclick="showPastWraps()">
+                        <i class="icon fas fa-user"></i>
+                        <h3 class="font-bold">Generate Duo-Wrap</h3>
+                    </div>
+                    <div class="card dashboard-card" onclick="showDuoWrapped()">
+                        <i class="icon fas fa-share-alt"></i>
+                        <h3 class="font-bold">Duo-Wrapped</h3>
+                    </div>
+                    <div class="card dashboard-card" onclick="showSettings()">
+                        <i class="icon fas fa-cog"></i>
+                        <h3 class="font-bold">Settings</h3>
+                    </div>
                 </div>
             </div>
-        {% endfor %}
+        </div>
+
+        <!-- Duo-Wrapped -->
+        <div class="duo-grid">
+            <div class="stats-container">
+                <h3>Past Wraps</h3>
+                <div class="past-wraps-container">
+                    {% if wraps %}
+                        {% for wrap in wraps %}
+                            <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
+                                {{ wrap }}
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="stats-container">
+                <h3>Past Duo-Wraps</h3>
+                <div class="past-duo-wraps-container">
+                    {% if wraps %}
+                        {% for wrap in wraps %}
+                            <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
+                                {{ wrap }}
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
+                    {% endif %}
+                </div>
+            </div>
+        </div>
+
+
+
+
+        <!-- Holiday Themes -->
+        <!-- Holiday Themes -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Holiday Themes</h2>
+            </div>
+            <div class="card-content">
+                <div class="holiday-grid">
+                    <div class="card holiday-card halloween">
+                        <div class="emoji">🎃</div>
+                        <h3 class="holiday-title">Halloween</h3>
+                    </div>
+                    <div class="card holiday-card christmas">
+                        <div class="emoji">🎄</div>
+                        <h3 class="holiday-title">Christmas</h3>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </body>
 </html>
