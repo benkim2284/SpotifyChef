@@ -369,7 +369,7 @@
 </head>
 <script>
     function generateNewWrap() {
-
+        window.location.href = "{% url 'SpotifyWrappedApp:wrapped' %}";
     }
 
     function showPastWraps() {
@@ -424,7 +424,7 @@
                     {% if wraps %}
                         {% for wrap in wraps %}
                             <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
-                                {{ wrap }}
+                                {{ wrap.created_at }}
                             </a>
                         {% endfor %}
                     {% else %}
