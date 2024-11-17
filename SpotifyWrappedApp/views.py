@@ -1,5 +1,5 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponseBadRequest
+from django.http import HttpResponseBadRequest, JsonResponse
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
 from django.urls import reverse
@@ -9,6 +9,7 @@ from .models import User, SoloWraps
 from django.core.cache import cache
 import os
 import json
+from django.views.decorators.csrf import csrf_exempt
 
 load_dotenv(dotenv_path='.env')
 
@@ -39,6 +40,55 @@ def get_authorization_code():
             cached_data = json.load(file)
         return cached_data["access_token"]
 
+@csrf_exempt
+def create_solowrap(request ):
+    access_token = get_authorization_code()
+
+    if access_token is None:
+        return HttpResponseBadRequest("Authorization code not provided.")
+
+    sp = Spotify(auth=access_token)
+
+    current_user_info = sp.current_user()
+    curr_user_id = current_user_info['id']
+    curr_user_display_name = current_user_info['display_name']
+
+    existing_user = User.objects.get(id=curr_user_id)
+
+    openai.api_key = os.getenv('OPENAI_API_KEY')
+
+    print("calling")
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "user",
+                "content": f"""Using the provided track_info data for the user's top 15 songs, generate content for 8 Spotify Wrapped slides.
+                        Each slide should focus on one category (e.g., Emotional Track, Favorite Genre, High-Energy Hits, Hidden Gems), and include a fun, creative, in-depth, and medium-length paragraph analysis for each category.
+                        Provide engaging text for each slide and include relevant emojis. Your output should be just a JSON that is formatted like '{{"category_name": “analysis...”, "category_name": “analysis...”, ...}}'.
+
+                        The track_info data for the user’s top 15 songs is: {existing_user.spotify_data}
+
+                        Your output should be just the JSON and nothing else. Make sure to not start your response with '''json or anything.
+                        It should start with just the json itself.
+                        """
+            }
+        ],
+        temperature=0.7  # Adjust temperature as needed
+    )
+
+    print("done")
+
+    raw_reply = response["choices"][0]["message"]["content"]
+    reply = json.loads(raw_reply)
+
+    new_wrap = SoloWraps(
+        user=existing_user,
+        wrap_data=reply,
+    )
+    new_wrap.save()
+    return JsonResponse({'wrapped_id': new_wrap.unique_id}, status=200)
+
 def home_view(request):
     sp_oauth = SpotifyOAuth(
         client_id=os.getenv('client_id'),
@@ -49,25 +99,26 @@ def home_view(request):
 
     # Check if there's a 'code' parameter in the request
     code = request.GET.get('code')
-    print(code)
-    if not code:
-        return HttpResponseBadRequest("Authorization code not provided.")
+    if code:
+        # Get access token using the authorization code
+        token_info = sp_oauth.get_access_token(code)
+        if not token_info:
+            return HttpResponseBadRequest("Could not retrieve access token.")
+        print(f"Token Info: {token_info}")
 
-    # Get access token using the authorization code
-    token_info = sp_oauth.get_access_token(code)
-    if not token_info:
-        return HttpResponseBadRequest("Could not retrieve access token.")
-    print(f"Token Info: {token_info}")
-
-    if 'access_token' in token_info:
-        access_token = token_info['access_token']
-        print("Access Token:", access_token)
-        print("Token Scopes:", token_info.get('scope'))
-
-    # Create a Spotify client with the obtained token
-    sp = Spotify(auth=token_info['access_token'])
+        if 'access_token' in token_info:
+            access_token = token_info['access_token']
+            print("Access Token:", access_token)
+            print("Token Scopes:", token_info.get('scope'))
+        else:
+            return HttpResponseBadRequest("Authorization code not provided.")
+    else:
+        access_token = get_authorization_code()
+        if access_token is None:
+            return HttpResponseBadRequest("Authorization code not provided.")
 
 
+    sp = Spotify(auth=access_token)
     results = sp.current_user_top_tracks(limit=15)
 
     top_tracks_with_insights = []
@@ -143,7 +194,7 @@ def home_view(request):
         new_existing_user.save()
         print("user already exists, but top tracks have been updated!!!")
 
-    existing_user_wraps = SoloWraps.objects.filter(user=new_existing_user)
+    existing_user_wraps = SoloWraps.objects.filter(user=new_existing_user).order_by('-created_at')
     print(existing_user_wraps)
     return render(request, 'SpotifyWrappedApp/home.html',
                   {
@@ -153,86 +204,47 @@ def home_view(request):
 
 
 
-def wrapped_view(request):
-    access_token = get_authorization_code()
+def wrapped_view(request, wrapped_id):
+    curr_solowrap = SoloWraps.objects.get(unique_id=wrapped_id)
+    solowrap_date = curr_solowrap.created_at;
 
-    if access_token is None:
-        return HttpResponseBadRequest("Authorization code not provided.")
-
-    sp = Spotify(auth=access_token)
-
-    current_user_info = sp.current_user()
-    curr_user_id = current_user_info['id']
-    curr_user_display_name = current_user_info['display_name']
-
-    existing_user = User.objects.get(id=curr_user_id)
-
-    openai.api_key = os.getenv('OPENAI_API_KEY')
-
-    print("calling")
-    response = openai.ChatCompletion.create(
-        model="gpt-4o-mini",
-        messages=[
-            {
-                "role": "user",
-                "content": f"""Using the provided track_info data for the user's top 15 songs, generate content for 8 Spotify Wrapped slides. 
-                    Each slide should focus on one category (e.g., Emotional Track, Favorite Genre, High-Energy Hits, Hidden Gems), and include a fun, creative, in-depth, and medium-length paragraph analysis for each category. 
-                    Provide engaging text for each slide and include relevant emojis. Your output should be just a JSON that is formatted like '{{"category_name": “analysis...”, "category_name": “analysis...”, ...}}'. 
-
-                    The track_info data for the user’s top 15 songs is: {existing_user.spotify_data}
-
-                    Your output should be just the JSON and nothing else. Make sure to not start your response with '''json or anything. 
-                    It should start with just the json itself.
-                    """
-            }
-        ],
-        temperature=0.7  # Adjust temperature as needed
-    )
-
-    print("done")
-
-    raw_reply = response["choices"][0]["message"]["content"]
-    reply = json.loads(raw_reply)
-
-    new_wrap = SoloWraps(
-        user=existing_user,
-        wrap_data=reply,
-    )
-    new_wrap.save()
-
-    return render(request, 'SpotifyWrappedApp/wrapped.html',
-                  {
-                      'name': curr_user_display_name,
-                      "wrap_data": reply
-                  })
+    user_name = curr_solowrap.user.name
+    return render(request, 'SpotifyWrappedApp/wrapped.html', {
+        'wrap_data': curr_solowrap.wrap_data,
+        "name": user_name,
+        "date": solowrap_date
+    })
 
 def toptracks_view(request):
-    sp_oauth = SpotifyOAuth(
-        client_id=os.getenv('client_id'),
-        client_secret=os.getenv('client_secret'),
-        redirect_uri="http://localhost:8000/SpotifyWrappedApp/toptracks",
-        scope = "user-library-read user-top-read user-read-email"
-    )
+    # sp_oauth = SpotifyOAuth(
+    #     client_id=os.getenv('client_id'),
+    #     client_secret=os.getenv('client_secret'),
+    #     redirect_uri="http://localhost:8000/SpotifyWrappedApp/toptracks",
+    #     scope = "user-library-read user-top-read user-read-email"
+    # )
+    #
+    # # Check if there's a 'code' parameter in the request
+    # code = request.GET.get('code')
+    # print(code)
+    # if not code:
+    #     return HttpResponseBadRequest("Authorization code not provided.")
+    #
+    # # Get access token using the authorization code
+    # token_info = sp_oauth.get_access_token(code)
+    # if not token_info:
+    #     return HttpResponseBadRequest("Could not retrieve access token.")
+    # print(f"Token Info: {token_info}")
+    #
+    # if 'access_token' in token_info:
+    #     access_token = token_info['access_token']
+    #     print("Access Token:", access_token)
+    #     print("Token Scopes:", token_info.get('scope'))
 
-    # Check if there's a 'code' parameter in the request
-    code = request.GET.get('code')
-    print(code)
-    if not code:
-        return HttpResponseBadRequest("Authorization code not provided.")
 
-    # Get access token using the authorization code
-    token_info = sp_oauth.get_access_token(code)
-    if not token_info:
-        return HttpResponseBadRequest("Could not retrieve access token.")
-    print(f"Token Info: {token_info}")
 
-    if 'access_token' in token_info:
-        access_token = token_info['access_token']
-        print("Access Token:", access_token)
-        print("Token Scopes:", token_info.get('scope'))
-
+    access_token = get_authorization_code()
     # Create a Spotify client with the obtained token
-    sp = Spotify(auth=token_info['access_token'])
+    sp = Spotify(auth=access_token)
 
 
 

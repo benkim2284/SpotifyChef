@@ -369,11 +369,28 @@
 </head>
 <script>
     function generateNewWrap() {
-        window.location.href = "{% url 'SpotifyWrappedApp:wrapped' %}";
+        const url = '/SpotifyWrappedApp/api/create_solowrap/';
+
+        fetch(url, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            }
+        })
+        .then(response => response.json())
+        .then(data => {
+            if (data.wrapped_id) {
+                console.log(data.wrapped_id)
+                window.location.href = window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
+            } else if (data.error) {
+                alert('Error: ' + data.error);
+            }
+        })
+        .catch(error => console.error('Error:', error));
     }
 
-    function showPastWraps() {
-
+    function NavigateToWrap(wrapped_id) {
+        window.location.href = window.location.href = `/SpotifyWrappedApp/wrapped/${wrapped_id}/`;
     }
 
     function showDuoWrapped() {
@@ -423,8 +440,8 @@
                 <div class="past-wraps-container">
                     {% if wraps %}
                         {% for wrap in wraps %}
-                            <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
-                                {{ wrap.created_at }}
+                            <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
+                                Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
                             </a>
                         {% endfor %}
                     {% else %}
