@@ -365,10 +365,79 @@
             font-weight: 700;
         }
 
+
+
+        .loading-popup {
+          position: fixed;
+          top: 0;
+          left: 0;
+          width: 100%;
+          height: 100%;
+          display: flex;
+          flex-direction: column;
+          justify-content: center;
+          align-items: center;
+          background-color: rgba(31, 31, 31, 0.9); /* Dark background with opacity */
+          z-index: 50;
+        }
+
+        .spinner {
+          width: 80px;
+          height: 80px;
+          border: 8px solid #1DB954; /* Spotify green */
+          border-radius: 50%;
+          border-top: 8px solid transparent;
+          animation: spin 1s linear infinite;
+        }
+
+        @keyframes spin {
+          100% {
+            transform: rotate(360deg);
+          }
+        }
+
+        .loading-text {
+          font-size: 1.125rem; /* text-lg */
+          font-weight: 550; /* font-bold */
+          color: white;
+          padding-top: 16px; /* pt-4 */
+          font-family: 'Montserrat', sans-serif; /* Use Google Font if included */
+        }
+
+        .loading-dots::after {
+          content: "";
+          animation: loadingDots 2s infinite steps(1);
+        }
+
+        @keyframes loadingDots {
+          0% {
+            content: "";
+          }
+          16.6% {
+            content: " .";
+          }
+          33.3% {
+            content: " . .";
+          }
+          50% {
+            content: " . . .";
+          }
+          66.6% {
+            content: " . .";
+          }
+          83.3% {
+            content: " .";
+          }
+          100% {
+            content: "";
+          }
+        }
+
     </style>
 </head>
 <script>
     function generateNewWrap() {
+        toggleLoadingScreen();
         const url = '/SpotifyWrappedApp/api/create_solowrap/';
 
         fetch(url, {
@@ -401,8 +470,28 @@
 
     }
 
+
+    function toggleLoadingScreen() {
+        const isLoading = true; // Replace this with your condition
+        const loadingContainer = document.getElementById('loadingContainer');
+        if (isLoading) {
+        loadingContainer.innerHTML = `
+          <div class="loading-popup">
+            <div class="spinner"></div>
+            <div class="loading-text">
+              This may take a quick moment<span class="loading-dots"></span>
+            </div>
+          </div>
+        `;
+        } else {
+            loadingContainer.innerHTML = '';
+        }
+    }
+
+
 </script>
 <body>
+     <div id="loadingContainer"></div>
      <div class="welcome-section">
         <h1 class="welcome-message">Welcome, <span id="user-name">{{ name }}</span>!</h1>
     </div>
