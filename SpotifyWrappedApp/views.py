@@ -2,6 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, JsonResponse
 from spotipy import Spotify
 from spotipy.oauth2 import SpotifyOAuth
+from spotipy.exceptions import SpotifyException
 from django.urls import reverse
 from dotenv import load_dotenv
 import openai
@@ -22,7 +23,7 @@ def oauth_view(request):
         client_id=os.getenv('client_id'),
         client_secret=os.getenv('client_secret'),
         redirect_uri="http://localhost:8000/SpotifyWrappedApp/home",
-        scope = "user-library-read user-top-read user-read-email"
+        scope="user-library-read user-top-read user-read-email user-read-private"
     )
 
     # Redirect to Spotify authorization URL
@@ -94,32 +95,41 @@ def home_view(request):
         client_id=os.getenv('client_id'),
         client_secret=os.getenv('client_secret'),
         redirect_uri="http://localhost:8000/SpotifyWrappedApp/home",
-        scope = "user-library-read user-top-read user-read-email"
+        scope="user-library-read user-top-read user-read-email user-read-private"
     )
 
     # Check if there's a 'code' parameter in the request
     code = request.GET.get('code')
+    token_info = None
+
     if code:
-        # Get access token using the authorization code
-        token_info = sp_oauth.get_access_token(code)
-        if not token_info:
-            return HttpResponseBadRequest("Could not retrieve access token.")
-        print(f"Token Info: {token_info}")
-
-        if 'access_token' in token_info:
-            access_token = token_info['access_token']
-            print("Access Token:", access_token)
-            print("Token Scopes:", token_info.get('scope'))
-        else:
-            return HttpResponseBadRequest("Authorization code not provided.")
+        try:
+            token_info = sp_oauth.get_access_token(code)
+            if not token_info:
+                return HttpResponseBadRequest("Could not retrieve access token.")
+            print(f"Token Info: {token_info}")
+        except SpotifyException as e:
+            return HttpResponseBadRequest(f"Spotify error while getting token: {e}")
     else:
-        access_token = get_authorization_code()
-        if access_token is None:
-            return HttpResponseBadRequest("Authorization code not provided.")
+        token_info = sp_oauth.get_cached_token()
 
+    # Refresh token if expired
+    if token_info and sp_oauth.is_token_expired(token_info):
+        try:
+            token_info = sp_oauth.refresh_access_token(token_info['refresh_token'])
+        except SpotifyException as e:
+            return HttpResponseBadRequest(f"Spotify error while refreshing token: {e}")
 
+    if not token_info or 'access_token' not in token_info:
+        return HttpResponseBadRequest("Authorization code not provided or token expired.")
+
+    access_token = token_info['access_token']
     sp = Spotify(auth=access_token)
-    results = sp.current_user_top_tracks(limit=15)
+
+    try:
+        results = sp.current_user_top_tracks(limit=15)
+    except SpotifyException as e:
+        return HttpResponseBadRequest(f"Spotify Exception while fetching top tracks: {e}")
 
     top_tracks_with_insights = []
 
@@ -182,28 +192,31 @@ def home_view(request):
     curr_user_id = current_user_info['id']
     curr_user_display_name = current_user_info['display_name']
 
+
     if curr_user_id not in User.objects.values_list('id', flat=True):
         new_existing_user = User(
             id=curr_user_id,
             name=current_user_info["display_name"],
             email=current_user_info["email"],
-            spotify_data= top_tracks_with_insights
+            spotify_data=top_tracks_with_insights
         )
         new_existing_user.save()
     else:
         new_existing_user = User.objects.get(id=curr_user_id)
         new_existing_user.spotify_data = top_tracks_with_insights
         new_existing_user.save()
-        print("user already exists, but top tracks have been updated!!!")
+        print("User already exists, but top tracks have been updated!")
 
+    # Retrieve existing wraps for the user
     existing_user_wraps = SoloWraps.objects.filter(user=new_existing_user).order_by('-created_at')
     print(existing_user_wraps)
+
+    # Render the home view with the relevant information
     return render(request, 'SpotifyWrappedApp/home.html',
                   {
                       'name': curr_user_display_name,
                       "wraps": existing_user_wraps
                   })
-
 
 def wrapped_view(request, wrapped_id):
     curr_solowrap = SoloWraps.objects.get(unique_id=wrapped_id)
