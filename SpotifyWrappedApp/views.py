@@ -134,69 +134,65 @@ def home_view(request):
     top_tracks_with_insights = []
 
     for track_stuff in results['items']:
-        try:
-            name = track_stuff['name']
-            artist = track_stuff['artists'][0]['name']
-            album = track_stuff['album']['name']
-            image_url = track_stuff['album']['images'][0]['url']
-            release_date = track_stuff['album']['release_date']
-            popularity = track_stuff['popularity']
-            preview_url = track_stuff['preview_url']
-            track_url = track_stuff['external_urls']['spotify']
+        name = track_stuff['name']
+        artist = track_stuff['artists'][0]['name']
+        album = track_stuff['album']['name']
+        image_url = track_stuff['album']['images'][0]['url']
+        release_date = track_stuff['album']['release_date']
+        popularity = track_stuff['popularity']
+        preview_url = track_stuff['preview_url']
+        track_url = track_stuff['external_urls']['spotify']
 
-            artist_id = track_stuff['artists'][0]['id']
-            artist_details = sp.artist(artist_id)
-            genres = artist_details['genres']
+        artist_id = track_stuff['artists'][0]['id']
+        artist_details = sp.artist(artist_id)
+        genres = artist_details['genres']
 
-            track_id = track_stuff['id']
-            audio_features = sp.audio_features(track_id)[0]
-            acousticness = audio_features['acousticness']
-            danceability = audio_features['danceability']
-            duration_ms = audio_features['duration_ms']
-            energy = audio_features['energy']
-            instrumentalness = audio_features['instrumentalness']
-            liveness = audio_features['liveness']
-            loudness = audio_features['loudness']
-            speechiness = audio_features['speechiness']
-            tempo = audio_features['tempo']
-            valence = audio_features['valence']
+        track_id = track_stuff['id']
 
-            track_info = {
-                'name': name,
-                'artist': artist,
-                'genre': genres,
-                'album': album,
-                'image_url': image_url,
-                'release_date': release_date,
-                'popularity': popularity,
-                'preview_url': preview_url,
-                'track_url': track_url,
-                'audio_features': {
-                    'danceability': danceability,
-                    'energy': energy,
-                    'loudness': loudness,
-                    'speechiness': speechiness,
-                    'acousticness': acousticness,
-                    'valence': valence,
-                    'tempo': tempo,
-                    'duration_ms': duration_ms,
-                    'instrumentalness': instrumentalness,
-                    'liveness': liveness
-                }
-            }
-            top_tracks_with_insights.append(track_info)
-        except Exception as e:
-            print(f"Error processing track {track_stuff['id']}: {e}")
+        # audio_features = sp.audio_features(track_id)[0]
+        # print(audio_features)
+        # acousticness = audio_features['acousticness']
+        # danceability = audio_features['danceability']
+        # duration_ms = audio_features['duration_ms']
+        # energy = audio_features['energy']
+        # instrumentalness = audio_features['instrumentalness']
+        # liveness = audio_features['liveness']
+        # loudness = audio_features['loudness']
+        # speechiness = audio_features['speechiness']
+        # tempo = audio_features['tempo']
+        # valence = audio_features['valence']
 
-    # Get current user info
-    try:
-        current_user_info = sp.current_user()
-        curr_user_id = current_user_info['id']
-        curr_user_display_name = current_user_info['display_name']
-    except SpotifyException as e:
-        return HttpResponseBadRequest(f"Spotify Exception while fetching current user info: {e}")
+        track_info = {
+            'name': name,
+            'artist': artist,
+            'genre': genres,
+            'album': album,
+            'image_url': image_url,
+            'release_date': release_date,
+            'popularity': popularity,
+            'preview_url': preview_url,
+            'track_url': track_url,
+            # 'audio_features': {
+            #     'danceability': danceability,
+            #     'energy': energy,
+            #     'loudness': loudness,
+            #     'speechiness': speechiness,
+            #     'acousticness': acousticness,
+            #     'valence': valence,
+            #     'tempo': tempo,
+            #     'duration_ms': duration_ms,
+            #     'instrumentalness': instrumentalness,
+            #     'liveness': liveness
+            # }
+        }
+        top_tracks_with_insights.append(track_info)
 
-    # Update or create user in the database
+
+    current_user_info = sp.current_user()
+    curr_user_id = current_user_info['id']
+    curr_user_display_name = current_user_info['display_name']
+
+
     if curr_user_id not in User.objects.values_list('id', flat=True):
         new_existing_user = User(
             id=curr_user_id,
