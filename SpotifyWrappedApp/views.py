@@ -365,3 +365,84 @@ def logout_view(request):
     logout_url = "https://accounts.spotify.com/en/logout"
     redirect_url = f"{logout_url}?continue={request.build_absolute_uri(reverse('SpotifyWrappedApp:oauth_screen'))}"
     return redirect(redirect_url)
+
+from django.views.decorators.csrf import csrf_exempt
+from django.http import JsonResponse
+
+@csrf_exempt
+def create_holidaywrap(request, holiday):
+    access_token = get_authorization_code()
+
+    if access_token is None:
+        return HttpResponseBadRequest("Authorization code not provided.")
+
+    sp = Spotify(auth=access_token)
+
+    current_user_info = sp.current_user()
+    curr_user_id = current_user_info['id']
+
+    try:
+        existing_user = User.objects.get(id=curr_user_id)
+    except User.DoesNotExist:
+        return HttpResponseBadRequest("User does not exist.")
+
+    openai.api_key = os.getenv('OPENAI_API_KEY')
+
+    print(f"Calling holiday wrap for {holiday}")
+
+    # Modify the prompt based on the holiday
+    if holiday.lower() == 'christmas':
+        prompt = f"""Using the provided track_info data for the user's top 15 songs, generate content for 8 Spotify Wrapped slides with a Christmas theme.
+Each slide should focus on one category (e.g., Emotional Track, Favorite Genre, High-Energy Hits, Hidden Gems), and include a fun, creative, in-depth, and medium-length paragraph analysis for each category.
+Provide engaging text for each slide and include relevant Christmas emojis and references. Your output should be just a JSON formatted like '{{"category_name": "analysis...", "category_name": "analysis...", ...}}'.
+
+The track_info data for the user’s top 15 songs is: {existing_user.spotify_data}
+
+Your output should be just the JSON and nothing else. Make sure to not start your response with ```json or anything.
+It should start with just the JSON itself.
+If the JSON output has no christmas related songs however, ignore this and artificially populate the responses with random christmas songs.
+"""
+    elif holiday.lower() == 'halloween':
+        prompt = f"""Using the provided track_info data for the user's top 15 songs, generate content for 8 Spotify Wrapped slides with a Halloween theme.
+Each slide should focus on one category (e.g., Spooky Tracks, Favorite Genre, High-Energy Hits, Hidden Gems), and include a fun, creative, in-depth, and medium-length paragraph analysis for each category.
+Provide engaging text for each slide and include relevant Halloween emojis and references. Your output should be just a JSON formatted like '{{"category_name": "analysis...", "category_name": "analysis...", ...}}'.
+
+The track_info data for the user’s top 15 songs is: {existing_user.spotify_data}
+
+Your output should be just the JSON and nothing else. Make sure to not start your response with ```json or anything.
+It should start with just the JSON itself.
+If the JSON output has no halloween related songs however, ignore this and artificially populate the responses with random haloween songs.
+"""
+    else:
+        return HttpResponseBadRequest("Invalid holiday.")
+
+    response = openai.ChatCompletion.create(
+        model="gpt-4o-mini",
+        messages=[
+            {
+                "role": "user",
+                "content": prompt
+            }
+        ],
+        temperature=0.7  # Adjust temperature as needed
+    )
+
+    print("done")
+
+    raw_reply = response["choices"][0]["message"]["content"]
+
+    try:
+        reply = json.loads(raw_reply)
+    except json.JSONDecodeError as e:
+        print(f"JSON decode error: {e}")
+        return JsonResponse({'error': 'Failed to parse AI response'}, status=500)
+
+    # Save the wrap, including the holiday if desired
+    new_wrap = SoloWraps(
+        user=existing_user,
+        wrap_data=reply,
+        # holiday=holiday  # Uncomment if you have a holiday field in your model
+    )
+    new_wrap.save()
+    return JsonResponse({'wrapped_id': new_wrap.unique_id}, status=200)
+
