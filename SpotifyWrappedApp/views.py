@@ -90,6 +90,9 @@ def create_solowrap(request ):
     new_wrap.save()
     return JsonResponse({'wrapped_id': new_wrap.unique_id}, status=200)
 
+def home(request):
+    return render(request, 'home.html')
+
 def home_view(request):
     sp_oauth = SpotifyOAuth(
         client_id=os.getenv('client_id'),
