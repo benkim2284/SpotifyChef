@@ -138,17 +138,19 @@ def home_view(request):
         genres = artist_details['genres']
 
         track_id = track_stuff['id']
-        audio_features = sp.audio_features(track_id)[0]
-        acousticness = audio_features['acousticness']
-        danceability = audio_features['danceability']
-        duration_ms = audio_features['duration_ms']
-        energy = audio_features['energy']
-        instrumentalness = audio_features['instrumentalness']
-        liveness = audio_features['liveness']
-        loudness = audio_features['loudness']
-        speechiness = audio_features['speechiness']
-        tempo = audio_features['tempo']
-        valence = audio_features['valence']
+
+        # audio_features = sp.audio_features(track_id)[0]
+        # print(audio_features)
+        # acousticness = audio_features['acousticness']
+        # danceability = audio_features['danceability']
+        # duration_ms = audio_features['duration_ms']
+        # energy = audio_features['energy']
+        # instrumentalness = audio_features['instrumentalness']
+        # liveness = audio_features['liveness']
+        # loudness = audio_features['loudness']
+        # speechiness = audio_features['speechiness']
+        # tempo = audio_features['tempo']
+        # valence = audio_features['valence']
 
         track_info = {
             'name': name,
@@ -160,18 +162,18 @@ def home_view(request):
             'popularity': popularity,
             'preview_url': preview_url,
             'track_url': track_url,
-            'audio_features': {
-                'danceability': danceability,
-                'energy': energy,
-                'loudness': loudness,
-                'speechiness': speechiness,
-                'acousticness': acousticness,
-                'valence': valence,
-                'tempo': tempo,
-                'duration_ms': duration_ms,
-                'instrumentalness': instrumentalness,
-                'liveness': liveness
-            }
+            # 'audio_features': {
+            #     'danceability': danceability,
+            #     'energy': energy,
+            #     'loudness': loudness,
+            #     'speechiness': speechiness,
+            #     'acousticness': acousticness,
+            #     'valence': valence,
+            #     'tempo': tempo,
+            #     'duration_ms': duration_ms,
+            #     'instrumentalness': instrumentalness,
+            #     'liveness': liveness
+            # }
         }
         top_tracks_with_insights.append(track_info)
 
@@ -201,7 +203,6 @@ def home_view(request):
                       'name': curr_user_display_name,
                       "wraps": existing_user_wraps
                   })
-
 
 
 def wrapped_view(request, wrapped_id):
