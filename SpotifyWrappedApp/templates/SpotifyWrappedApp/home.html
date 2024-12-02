@@ -488,6 +488,12 @@
         }
     }
 
+    function guessTopArtistGame() {
+        // Navigate to the Guess Your Top Artist game page
+        const gameUrl = '/SpotifyWrappedApp/guessTop/';
+        window.location.href = gameUrl;
+    }
+
 
 </script>
 <body>
@@ -518,6 +524,10 @@
                         <i class="icon fas fa-cog"></i>
                         <h3 class="font-bold">Settings</h3>
                     </div>
+                    <div class="card dashboard-card" onclick="guessTopArtistGame()">
+                        <i class="icon fas fa-gamepad"></i>
+                        <h3 class="font-bold">Guess Your Top Songs</h3>
+                    </div>                    
                 </div>
             </div>
         </div>

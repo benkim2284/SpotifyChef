@@ -365,3 +365,48 @@ def logout_view(request):
     logout_url = "https://accounts.spotify.com/en/logout"
     redirect_url = f"{logout_url}?continue={request.build_absolute_uri(reverse('SpotifyWrappedApp:oauth_screen'))}"
     return redirect(redirect_url)
+
+
+
+def guessTop(request):
+    access_token = get_authorization_code()
+
+    if access_token is None:
+        return HttpResponseBadRequest("Authorization code not provided.")
+
+    sp = Spotify(auth=access_token)
+
+    try:
+        # Fetch top tracks for the current user
+        results = sp.current_user_top_tracks(limit=50)
+        top_tracks = results['items']  # List of track objects
+
+        if not top_tracks:
+            return HttpResponseBadRequest("No top tracks found.")
+
+        # Prepare a list of tracks with necessary information
+        tracks_info = []
+        for track in top_tracks:
+            track_info = {
+                'id': track['id'],
+                'name': track['name'],
+                'album_art_url': track['album']['images'][0]['url'] if track['album']['images'] else None,
+                'artists': [artist['name'] for artist in track['artists']],
+            }
+            tracks_info.append(track_info)
+
+        # Remove tracks without album art
+        tracks_with_art = [track for track in tracks_info if track['album_art_url']]
+
+        if not tracks_with_art:
+            return HttpResponseBadRequest("No tracks with available album art.")
+
+        # Serialize the tracks data to JSON to pass to the template
+        tracks_json = json.dumps(tracks_with_art)
+
+        return render(request, 'SpotifyWrappedApp/guessTop.html', {
+            'tracks_json': tracks_json
+        })
+
+    except SpotifyException as e:
+        return HttpResponseBadRequest(f"Spotify Exception while fetching top tracks: {e}")
