@@ -14,5 +14,5 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('api/create_solowrap/', views.create_solowrap, name='create_solowrap'),
     path('api/create_holidaywrap/<str:holiday>/', views.create_holidaywrap, name='create_holidaywrap'),
-
+    path('guessTop/', views.guessTop, name='guessTop')
 ]
