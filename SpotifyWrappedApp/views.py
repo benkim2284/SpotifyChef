@@ -6,7 +6,7 @@ from spotipy.exceptions import SpotifyException
 from django.urls import reverse
 from dotenv import load_dotenv
 import openai
-from .models import User, SoloWraps
+from .models import User, SoloWraps, DuoWraps
 from django.core.cache import cache
 import os
 import json
@@ -30,7 +30,6 @@ def oauth_view(request):
     auth_url = sp_oauth.get_authorize_url()
     return redirect(auth_url)
 
-
 def get_authorization_code():
     cache_file_path = '.cache'  # Replace with the actual path to your .cache file
 
@@ -41,8 +40,114 @@ def get_authorization_code():
             cached_data = json.load(file)
         return cached_data["access_token"]
 
+def friend_select_view(request):
+    current_user_id = request.user.id
+    users = User.objects.exclude(id=current_user_id)
+
+    return render(request, 'SpotifyWrappedApp/friend_select.html', {'users': users})
+
 @csrf_exempt
-def create_solowrap(request ):
+def create_duowrap(request):
+    try:
+        # Step 1: Parse the incoming request
+        if request.method != 'POST':
+            return HttpResponseBadRequest("Invalid request method. Expected POST.")
+
+        try:
+            # Parse the JSON body
+            data = json.loads(request.body)
+            selected_friend_id = data.get('selected_friend')
+        except json.JSONDecodeError as e:
+            print(f"JSON Decode Error: {str(e)}")  # Debugging: Log JSON decoding issues
+            return HttpResponseBadRequest("Invalid JSON format.")
+
+        # Step 2: Validate the presence of 'selected_friend'
+        if not selected_friend_id:
+            print("Debugging: 'selected_friend' key missing or empty")  # Debugging: Log missing friend selection
+            return HttpResponseBadRequest("Friend selection not provided.")
+
+        # Step 3: Get the current user's authorization token
+        access_token = get_authorization_code()
+        if access_token is None:
+            print("Debugging: Authorization token not provided")  # Debugging: Log missing authorization
+            return HttpResponseBadRequest("Authorization code not provided.")
+
+        # Step 4: Create Spotify client for current user
+        sp = Spotify(auth=access_token)
+
+        # Step 5: Get current user info from Spotify
+        current_user_info = sp.current_user()
+        curr_user_id = current_user_info['id']
+        curr_user_display_name = current_user_info['display_name']
+
+        # Step 6: Check if current user exists in the database
+        try:
+            existing_user = User.objects.get(id=curr_user_id)
+        except User.DoesNotExist:
+            print(f"Debugging: Current user with ID {curr_user_id} does not exist in database")  # Debugging
+            return HttpResponseBadRequest("Current user not found in database.")
+
+        # Step 7: Get the selected friend's info from the database
+        try:
+            friend_user = User.objects.get(id=selected_friend_id)
+        except User.DoesNotExist:
+            print(f"Debugging: Selected friend with ID {selected_friend_id} does not exist in database")  # Debugging
+            return HttpResponseBadRequest("Selected friend not found in database.")
+
+        # Step 8: Set OpenAI API key
+        openai.api_key = os.getenv('OPENAI_API_KEY')
+
+        # Step 9: Call OpenAI API to generate duo wrap
+        print("Debugging: Calling OpenAI API for duo wrap generation...")  # Debugging
+        response = openai.ChatCompletion.create(
+            model="gpt-4o-mini",
+            messages=[
+                {
+                    "role": "user",
+                    "content": f"""Using the provided track_info data for two users' top 15 songs, generate content for 8 Spotify Wrapped slides.
+                            Each slide should focus on one category (e.g., Emotional Track, Favorite Genre, High-Energy Hits, Hidden Gems), and include a fun, creative, in-depth, and medium-length paragraph analysis for each category.
+                            Provide engaging text for each slide and include relevant emojis. Your output should be just a JSON that is formatted like '{{"category_name": “analysis...”, "category_name": “analysis...”, ...}}'.
+                            Be sure to provide synergies of genres and common songs or anything related between the current user and the selected friend and display according to the format instructed.
+
+                            The track_info data for the current user ({curr_user_display_name}) is: {existing_user.spotify_data}
+                            The track_info data for the selected friend ({friend_user.name}) is: {friend_user.spotify_data}
+
+                            Your output should be just the JSON and nothing else. Make sure to not start your response with '''json or anything.
+                            It should start with just the json itself.
+                            """
+                }
+            ],
+            temperature=0.7
+        )
+
+        print("Debugging: OpenAI API call completed successfully.")  # Debugging
+
+        # Step 10: Process OpenAI API response
+        raw_reply = response["choices"][0]["message"]["content"]
+        try:
+            reply = json.loads(raw_reply)
+        except json.JSONDecodeError as e:
+            print(f"Debugging: JSON Decode Error when parsing OpenAI response: {str(e)}")  # Debugging
+            return HttpResponseBadRequest("Invalid response format from OpenAI.")
+
+        # Step 11: Save new DuoWrap
+        new_wrap = DuoWraps(
+            user_1=existing_user,
+            user_2=friend_user,
+            wrap_data=reply,
+        )
+        new_wrap.save()
+
+        # Step 12: Return the wrap ID for redirection
+        return JsonResponse({'wrapped_id': new_wrap.unique_id}, status=200)
+
+    except Exception as e:
+        # General exception handling to log unexpected errors
+        print(f"Debugging: An unexpected error occurred: {str(e)}")  # Debugging
+        return HttpResponseBadRequest("An unexpected error occurred.")
+
+@csrf_exempt
+def create_solowrap(request):
     access_token = get_authorization_code()
 
     if access_token is None:
@@ -98,7 +203,6 @@ def home_view(request):
         scope="user-library-read user-top-read user-read-email user-read-private"
     )
 
-    # Check if there's a 'code' parameter in the request
     code = request.GET.get('code')
     token_info = None
 
@@ -228,6 +332,27 @@ def wrapped_view(request, wrapped_id):
         "name": user_name,
         "date": solowrap_date
     })
+
+def duo_wrapped_view(request, wrapped_id):
+    try:
+        curr_duowrap = DuoWraps.objects.get(unique_id=wrapped_id)
+    except DuoWraps.DoesNotExist:
+        return HttpResponseBadRequest("Duo wrap not found.")
+
+    # Extract relevant information from the duo wrap
+    wrap_data = curr_duowrap.wrap_data
+    user_1_name = curr_duowrap.user_1.name
+    user_2_name = curr_duowrap.user_2.name
+    duowrap_date = curr_duowrap.created_at
+
+    # Render the duo_wrapped.html template
+    return render(request, 'SpotifyWrappedApp/wrapped.html', {
+        'wrap_data': wrap_data,
+        'user_1_name': user_1_name,
+        'user_2_name': user_2_name,
+        'date': duowrap_date
+    })
+
 
 def toptracks_view(request):
     # sp_oauth = SpotifyOAuth(

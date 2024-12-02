@@ -21,13 +21,12 @@
         .container {
             width: 100%;
             max-width: 1100px;
-            padding: 40px 70px; /* Increased padding */
+            padding: 40px 70px;
             background-color: rgba(25, 20, 20, 0.9);
             border-radius: 30px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             position: relative;
         }
-
         .title {
             text-align: center;
             color: #FFFFFF;
@@ -55,7 +54,6 @@
         .active {
             display: block;
         }
-        /* Title (Exciting letters) */
         .title-slide h2 {
             font-size: 3em;
             margin-bottom: 20px;
@@ -63,21 +61,15 @@
             font-weight: bold;
             text-transform: uppercase;
             animation: bounce 1s infinite;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100%;
-            text-align: center;
         }
-        /* Description */
         .description-slide p {
             font-size: 1.5em;
             line-height: 1.6em;
             color: #FFFFFF;
-            padding: 0 40px; /* Add horizontal padding to create space on the sides */
-            margin-bottom: 30px; /* Optional: Adds space between the paragraph and the buttons */
-            max-height: 400px; /* Max height for the description slide */
-            overflow-y: auto; /* Enables vertical scrolling if content overflows */
+            padding: 0 40px;
+            margin-bottom: 30px;
+            max-height: 400px;
+            overflow-y: auto;
             white-space: pre-line;
         }
         @keyframes bounce {
@@ -137,7 +129,13 @@
 </head>
 <body>
     <div class="container">
-        <h2 class="title">{{ name }}'s Spotify Wrapped From {{ date }}</h2>
+        <h2 class="title">
+            {% if user_2_name %}
+                {{ user_1_name }} & {{ user_2_name }}'s Spotify Duo Wrapped From {{ date }}
+            {% else %}
+                {{ name }}'s Spotify Wrapped From {{ date }}
+            {% endif %}
+        </h2>
 
         <div class="slideshow-container" id="slideshow-container">
             <!-- Slides will be generated here -->
@@ -156,36 +154,23 @@
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        let slidesData = {
-            "Most Played Artist": "...",
-            "Favorite Songs": "The tracks that made your playlist unforgettable...",
-            "Total Listening Time": "A reflection of the time you spent listening to music.",
-            "New Discoveries": "Artists and songs you just couldn’t get enough of!",
-            "Most Active Hours": "When did you stream your most music?",
-            "Top Mood": "What was the vibe of your year?",
-            "Global Playlist Trends": "How do your listening habits compare globally?",
-            "Top Tracks": "Here are the tracks that kept you going."
-        }
+        let wrapData = {{ wrap_data | safe }};
 
         // Function to generate slides and dots dynamically
         function generateSlides() {
             let slideshowContainer = document.getElementById('slideshow-container');
             let dotsContainer = document.getElementById('dots-container');
 
-            let wrapData = {{ wrap_data | safe }};
-            console.log(wrapData)
-
             // Generate slides (each category + description in groups of 2)
             let slidesHTML = '';
 
             Object.entries(wrapData).forEach(([title, description]) => {
-                // Title slide
                 slidesHTML += `
-                    <div class="slide title-slide active">
+                    <div class="slide title-slide">
                         <h2>${title}</h2>
                     </div>
                     <!-- Description slide -->
-                    <div class="slide description-slide active">
+                    <div class="slide description-slide">
                         <p>${description}</p>
                     </div>
                 `;
@@ -195,7 +180,7 @@
 
             // Generate dots
             let dotsHTML = '';
-            const numSlides = Object.keys(slidesData).length * 2; // 2 slides per entry (title + description)
+            const numSlides = Object.keys(wrapData).length * 2; // 2 slides per entry (title + description)
             for (let i = 0; i < numSlides; i++) {
                 dotsHTML += `<span class="dot${i === 0 ? ' active-dot' : ''}" onclick="currentSlide(${i + 1})"></span>`;
             }
