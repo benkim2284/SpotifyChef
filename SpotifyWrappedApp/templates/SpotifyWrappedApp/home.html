@@ -493,11 +493,6 @@
             gap: 1rem;
         }
 
-    function deleteAccount() {
-        window.location.href = '/SpotifyWrappedApp/delete_account/';
-    }
-
-    function showDuoWrapped() {
         .theme-switch {
             display: inline-block;
             height: 34px;
@@ -623,41 +618,41 @@
 
         <!-- Duo-Wrapped -->
         <div class="duo-grid">
-    <div class="stats-container">
-        <h3>Past Wraps</h3>
-        <div class="past-wraps-container">
-            {% if wraps %}
-                {% for wrap in wraps %}
-                    <div class="wrap-item">
-                        <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
-                            Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
-                        </a>
-                        <button class="delete-button" onclick="deleteSoloWrap('{{ wrap.unique_id }}')">Delete</button>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
-            {% endif %}
+            <div class="stats-container">
+                <h3>Past Wraps</h3>
+                <div class="past-wraps-container">
+                    {% if wraps %}
+                        {% for wrap in wraps %}
+                            <div class="wrap-item">
+                                <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
+                                    Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
+                                </a>
+                                <button class="delete-button" onclick="deleteSoloWrap('{{ wrap.unique_id }}')">Delete</button>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="stats-container">
+                <h3>Past Duo-Wraps</h3>
+                <div class="past-duo-wraps-container">
+                    {% if duo_wraps %}
+                        {% for duo_wrap in duo_wraps %}
+                            <div class="wrap-item">
+                                <a class="past-wrap-link" onclick="NavigateToDuoWrap('{{ duo_wrap.unique_id }}')">
+                                    DuoWrap #{{ forloop.revcounter }} ({{ duo_wrap.created_at }})
+                                </a>
+                                <button class="delete-button" onclick="deleteDuoWrap('{{ duo_wrap.unique_id }}')">Delete</button>
+                            </div>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
+                    {% endif %}
+                </div>
+            </div>
         </div>
-    </div>
-    <div class="stats-container">
-        <h3>Past Duo-Wraps</h3>
-        <div class="past-duo-wraps-container">
-            {% if duo_wraps %}
-                {% for duo_wrap in duo_wraps %}
-                    <div class="wrap-item">
-                        <a class="past-wrap-link" onclick="NavigateToDuoWrap('{{ duo_wrap.unique_id }}')">
-                            DuoWrap #{{ forloop.revcounter }} ({{ duo_wrap.created_at }})
-                        </a>
-                        <button class="delete-button" onclick="deleteDuoWrap('{{ duo_wrap.unique_id }}')">Delete</button>
-                    </div>
-                {% endfor %}
-            {% else %}
-                <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
-            {% endif %}
-        </div>
-    </div>
-</div>
 
         <!-- Holiday Themes -->
         <div class="card">
@@ -777,10 +772,21 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                data: wrapped_id
+                body: JSON.stringify({ wrapped_id }), // Ensure proper body formatting
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Successfully deleted the wrap
+                    console.log(`Wrap with ID ${wrapped_id} deleted successfully.`);
+                    // Reload the wraps section or the entire page
+                    location.reload(); // Refreshes the entire page to show updated wraps
+                } else {
+                    console.error('Failed to delete wrap:', response.statusText);
+                }
             })
             .catch(error => console.error('Error:', error));
         }
+
 
         function deleteDuoWrap(wrapped_id) {
             const url = `/SpotifyWrappedApp/api/delete_duowrap/${wrapped_id}/`;
@@ -790,7 +796,17 @@
                 headers: {
                     'Content-Type': 'application/json',
                 },
-                data: wrapped_id
+                body: JSON.stringify({ wrapped_id }), // Ensure proper body formatting
+            })
+            .then(response => {
+                if (response.ok) {
+                    // Successfully deleted the wrap
+                    console.log(`Duo Wrap with ID ${wrapped_id} deleted successfully.`);
+                    // Reload the wraps section or the entire page
+                    location.reload(); // Refreshes the entire page to show updated wraps
+                } else {
+                    console.error('Failed to delete wrap:', response.statusText);
+                }
             })
             .catch(error => console.error('Error:', error));
 
