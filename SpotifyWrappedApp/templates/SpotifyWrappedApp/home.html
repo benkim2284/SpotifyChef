@@ -1,11 +1,68 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Existing head content -->
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #121212;
+            --text-color: white;
+            --primary-color: #1DB954; /* Spotify green */
+            --secondary-color: #b3b3b3;
+            --card-bg-color: #1c1c1c;
+            --welcome-bg-color: #282828;
+            --button-bg-color: #1DB954;
+            --button-text-color: white;
+            --button-outline-color: #1DB954;
+            --icon-color: white;
+            --holiday-text-color: white;
+            --loading-popup-bg: rgba(31, 31, 31, 0.9);
+            --spinner-border-color: #1DB954;
+            --spinner-border-top-color: transparent;
+            --border-color: #333;
+        }
+
+        .light-mode {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --primary-color: #1DB954;
+            --secondary-color: #333333;
+            --card-bg-color: #f0f0f0;
+            --welcome-bg-color: #f7f7f7;
+            --button-bg-color: #1DB954;
+            --button-text-color: white;
+            --button-outline-color: #1DB954;
+            --icon-color: #1DB954;
+            --holiday-text-color: white;
+            --loading-popup-bg: rgba(255, 255, 255, 0.9);
+            --spinner-border-color: #1DB954;
+            --spinner-border-top-color: transparent;
+            --border-color: #cccccc;
+        }
+
+        /* Grimace Theme Variables */
+        .grimace-mode {
+            --bg-color: #4B0082; /* Indigo background */
+            --text-color: #FFD700; /* Gold text */
+            --primary-color: #800080; /* Purple */
+            --secondary-color: #DA70D6; /* Orchid */
+            --card-bg-color: #6A0DAD; /* Royal Purple */
+            --welcome-bg-color: #9932CC; /* Dark Orchid */
+            --button-bg-color: #800080; /* Purple */
+            --button-text-color: #FFD700; /* Gold */
+            --button-outline-color: #FFD700; /* Gold */
+            --icon-color: #FFD700; /* Gold */
+            --holiday-text-color: #FFD700; /* Gold */
+            --loading-popup-bg: rgba(75, 0, 130, 0.9); /* Indigo with opacity */
+            --spinner-border-color: #FFD700; /* Gold */
+            --spinner-border-top-color: transparent;
+            --border-color: #FFD700; /* Gold */
+        }
+
         /* Reset and base styles */
         * {
             margin: 0;
@@ -17,8 +74,8 @@
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.5;
             padding: 2rem;
-            background-color: #121212;
-            color: white;
+            background-color: var(--bg-color);
+            color: var(--text-color);
         }
 
         .space-y-8 > * + * {
@@ -28,7 +85,7 @@
         .welcome-section {
             text-align: center;
             padding: 1.5rem;
-            background-color: #282828;
+            background-color: var(--welcome-bg-color);
             border-radius: 1rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -38,22 +95,22 @@
             font-size: 3rem;
             font-weight: 800;
             margin: 0;
-            color: #1DB954; /* Spotify green */
+            color: var(--primary-color);
         }
 
         .welcome-subtitle {
             font-size: 1rem;
             margin-top: 0.5rem;
-            color: #b3b3b3;
+            color: var(--secondary-color);
         }
 
         #user-name {
-            color: #1ED760; /* Slightly brighter green for the name */
+            color: var(--primary-color);
         }
 
         /* Card styles */
         .card {
-            background: #1c1c1c;
+            background: var(--card-bg-color);
             border-radius: 1rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -62,13 +119,13 @@
 
         .card-header {
             padding: 1.5rem;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .card-title {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #1DB954;
+            color: var(--primary-color);
         }
 
         .card-content {
@@ -82,7 +139,7 @@
         /* Landing page styles */
         .hero-section {
             height: 12rem;
-            background: linear-gradient(to right, #1DB954, #191414);
+            background: linear-gradient(to right, var(--primary-color), #191414);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -93,7 +150,7 @@
         .hero-title {
             font-size: 3rem;
             font-weight: bold;
-            color: white;
+            color: var(--text-color);
         }
 
         /* Button styles */
@@ -113,14 +170,14 @@
         }
 
         .button-primary {
-            background-color: #1DB954;
-            color: white;
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
         }
 
         .button-outline {
             background-color: transparent;
-            border: 1px solid #1DB954;
-            color: #1DB954;
+            border: 1px solid var(--button-outline-color);
+            color: var(--button-outline-color);
         }
 
         /* Dashboard grid */
@@ -145,10 +202,11 @@
         .dashboard-card {
             padding: 1rem;
             text-align: center;
-            background-color: #333;
+            background-color: var(--card-bg-color);
             border-radius: 0.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .dashboard-card:hover {
@@ -161,6 +219,7 @@
             height: 2rem;
             margin-bottom: 0.5rem;
             display: inline-block;
+            color: var(--icon-color);
         }
 
         .font-bold {
@@ -171,7 +230,7 @@
         .presentation-container {
             position: relative;
             height: 24rem;
-            background: linear-gradient(to right, #1DB954, #191414);
+            background: linear-gradient(to right, var(--primary-color), #191414);
             border-radius: 1rem;
         }
 
@@ -193,7 +252,7 @@
             width: 0.5rem;
             height: 0.5rem;
             border-radius: 9999px;
-            background-color: white;
+            background-color: var(--text-color);
         }
 
         .indicator.inactive {
@@ -209,8 +268,16 @@
 
         .stats-container {
             padding: 1rem;
-            background-color: #333;
-            border-radius: 0.5rem;
+            background-color: var(--card-bg-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            max-height: 300px;
+            transition: background-color 0.3s ease;
+        }
+
+        .stats-container:hover {
+            background-color: var(--welcome-bg-color);
         }
 
         .stats-bar {
@@ -219,8 +286,6 @@
             margin-top: 0.5rem;
         }
 
-        /* Holiday themes */
-        /* Holiday themes */
         /* Holiday themes */
         .holiday-grid {
             display: grid;
@@ -236,6 +301,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
+            cursor: pointer;
         }
 
         .holiday-card:hover {
@@ -250,7 +316,7 @@
 
         .halloween {
             background: linear-gradient(135deg, #ff7a00, #ffcc00);
-            color: white;
+            color: var(--holiday-text-color);
             background-size: 200% 200%;
             animation: halloweenGlow 1.5s infinite alternate;
             position: relative;
@@ -264,7 +330,7 @@
 
         .christmas {
             background: linear-gradient(135deg, #ff0000, #00b300);
-            color: white;
+            color: var(--holiday-text-color);
             background-size: 200% 200%;
             animation: christmasGlow 1.5s infinite alternate;
             position: relative;
@@ -296,20 +362,6 @@
             }
         }
 
-        .stats-container {
-            background-color: #2a2a2a;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-            overflow-y: auto;
-            max-height: 300px;
-            transition: background-color 0.3s ease;
-        }
-
-        .stats-container:hover {
-            background-color: #333;
-        }
-
         /* Link styles */
         .past-wrap-link, .past-duo-wrap-link {
             display: block;
@@ -317,16 +369,17 @@
             font-size: 1rem;
             font-weight: 500;
             text-decoration: none;
-            color: #fff;
-            background-color: #1c1c1c;
+            color: var(--text-color);
+            background-color: var(--card-bg-color);
             margin-bottom: 0.5rem;
             border-radius: 0.5rem;
             transition: background-color 0.3s ease, color 0.3s ease;
+            cursor: pointer;
         }
 
         .past-wrap-link:hover, .past-duo-wrap-link:hover {
-            background-color: #1DB954;
-            color: #000;
+            background-color: var(--primary-color);
+            color: var(--bg-color);
         }
 
         .past-wrap-link:active, .past-duo-wrap-link:active {
@@ -338,7 +391,7 @@
             font-size: 1.25rem;
             font-weight: bold;
             margin-bottom: 1rem;
-            color: #1DB954;
+            color: var(--primary-color);
         }
 
         /* Scrollbar styles */
@@ -347,7 +400,7 @@
         }
 
         .stats-container::-webkit-scrollbar-thumb {
-            background-color: #1DB954;
+            background-color: var(--primary-color);
             border-radius: 8px;
         }
 
@@ -356,148 +409,190 @@
         }
 
         .stats-container::-webkit-scrollbar-track {
-            background-color: #1c1c1c;
+            background-color: var(--card-bg-color);
         }
 
         .no-wraps-message {
             font-size: 1.1rem;
-            color: #ccc;
+            color: var(--secondary-color);
             font-weight: 700;
         }
 
-
-
         .loading-popup {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          background-color: rgba(31, 31, 31, 0.9); /* Dark background with opacity */
-          z-index: 50;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: var(--loading-popup-bg);
+            z-index: 50;
         }
 
         .spinner {
-          width: 80px;
-          height: 80px;
-          border: 8px solid #1DB954; /* Spotify green */
-          border-radius: 50%;
-          border-top: 8px solid transparent;
-          animation: spin 1s linear infinite;
+            width: 80px;
+            height: 80px;
+            border: 8px solid var(--spinner-border-color);
+            border-radius: 50%;
+            border-top: 8px solid var(--spinner-border-top-color);
+            animation: spin 1s linear infinite;
         }
 
         @keyframes spin {
-          100% {
-            transform: rotate(360deg);
-          }
+            100% {
+                transform: rotate(360deg);
+            }
         }
 
         .loading-text {
-          font-size: 1.125rem; /* text-lg */
-          font-weight: 550; /* font-bold */
-          color: white;
-          padding-top: 16px; /* pt-4 */
-          font-family: 'Montserrat', sans-serif; /* Use Google Font if included */
+            font-size: 1.125rem;
+            font-weight: 550;
+            color: var(--text-color);
+            padding-top: 16px;
+            font-family: 'Montserrat', sans-serif;
         }
 
         .loading-dots::after {
-          content: "";
-          animation: loadingDots 2s infinite steps(1);
+            content: "";
+            animation: loadingDots 2s infinite steps(1);
         }
 
         @keyframes loadingDots {
-          0% {
-            content: "";
-          }
-          16.6% {
-            content: " .";
-          }
-          33.3% {
-            content: " . .";
-          }
-          50% {
-            content: " . . .";
-          }
-          66.6% {
-            content: " . .";
-          }
-          83.3% {
-            content: " .";
-          }
-          100% {
-            content: "";
-          }
+            0% {
+                content: "";
+            }
+            16.6% {
+                content: " .";
+            }
+            33.3% {
+                content: " . .";
+            }
+            50% {
+                content: " . . .";
+            }
+            66.6% {
+                content: " . .";
+            }
+            83.3% {
+                content: " .";
+            }
+            100% {
+                content: "";
+            }
         }
 
-    </style>
-</head>
-<script>
-    function generateNewWrap() {
-        toggleLoadingScreen();
-        const url = '/SpotifyWrappedApp/api/create_solowrap/';
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.wrapped_id) {
-                console.log(data.wrapped_id)
-                window.location.href = window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
-            } else if (data.error) {
-                alert('Error: ' + data.error);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-
-    function selectFriend() {
-        window.location.href = '/SpotifyWrappedApp/friend_select/';
-    }
+        /* Theme Switch Styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
 
     function deleteAccount() {
         window.location.href = '/SpotifyWrappedApp/delete_account/';
     }
 
     function showDuoWrapped() {
-
-    }
-
-    function showSettings() {
-
-    }
-
-
-    function toggleLoadingScreen() {
-        const isLoading = true; // Replace this with your condition
-        const loadingContainer = document.getElementById('loadingContainer');
-        if (isLoading) {
-        loadingContainer.innerHTML = `
-          <div class="loading-popup">
-            <div class="spinner"></div>
-            <div class="loading-text">
-              This may take a quick moment<span class="loading-dots"></span>
-            </div>
-          </div>
-        `;
-        } else {
-            loadingContainer.innerHTML = '';
+        .theme-switch {
+            display: inline-block;
+            height: 34px;
+            position: relative;
+            width: 60px;
         }
-    }
 
+        .theme-switch input {
+            display: none;
+        }
 
-</script>
+        .slider {
+            background-color: var(--secondary-color);
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: var(--button-bg-color);
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Additional Styles for Theme Select */
+        .theme-select {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: var(--welcome-bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+
+        .wrap-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .delete-button {
+            background-color: #FF4D4D;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background-color: #FF0000;
+        }
+
+    </style>
+</head>
 <body>
-     <div id="loadingContainer"></div>
-     <div class="welcome-section">
+    <header style="display: flex; justify-content: flex-end; padding: 1rem;">
+    <button class="button button-primary" onclick="window.location.href='/SpotifyWrappedApp/logout/'">
+        Logout
+    </button>
+</header>
+    <div id="loadingContainer"></div>
+    <div class="welcome-section">
         <h1 class="welcome-message">Welcome, <span id="user-name">{{ name }}</span>!</h1>
+        <!-- Theme Toggle Switch -->
+        <div class="theme-switch-wrapper">
+            <label for="theme-select">Choose Theme:</label>
+            <select id="theme-select" class="theme-select">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="grimace">Grimace</option>
+            </select>
+        </div>
     </div>
     <div class="space-y-8">
         <div class="card">
@@ -518,46 +613,52 @@
                         <i class="icon fas fa-cog"></i>
                         <h3 class="font-bold">Delete Account</h3>
                     </div>
+                    <div class="card dashboard-card" onclick="guessTopArtistGame()">
+                        <i class="icon fas fa-gamepad"></i>
+                        <h3 class="font-bold">Guess Your Top Songs</h3>
+                    </div>     
                 </div>
             </div>
         </div>
 
         <!-- Duo-Wrapped -->
         <div class="duo-grid">
-            <div class="stats-container">
-                <h3>Past Wraps</h3>
-                <div class="past-wraps-container">
-                    {% if wraps %}
-                        {% for wrap in wraps %}
-                            <a class="past-wrap-link" onclick="generateNewDuoWrap('{{ wrap.unique_id }}')">
-                                Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
-                            </a>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="stats-container">
-                <h3>Past Duo-Wraps</h3>
-                <div class="past-duo-wraps-container">
-                    {% if wraps %}
-                        {% for wrap in wraps %}
-                            <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
-                                {{ wrap }}
-                            </a>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
-                    {% endif %}
-                </div>
-            </div>
+    <div class="stats-container">
+        <h3>Past Wraps</h3>
+        <div class="past-wraps-container">
+            {% if wraps %}
+                {% for wrap in wraps %}
+                    <div class="wrap-item">
+                        <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
+                            Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
+                        </a>
+                        <button class="delete-button" onclick="deleteSoloWrap('{{ wrap.unique_id }}')">Delete</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
+            {% endif %}
         </div>
+    </div>
+    <div class="stats-container">
+        <h3>Past Duo-Wraps</h3>
+        <div class="past-duo-wraps-container">
+            {% if duo_wraps %}
+                {% for duo_wrap in duo_wraps %}
+                    <div class="wrap-item">
+                        <a class="past-wrap-link" onclick="NavigateToDuoWrap('{{ duo_wrap.unique_id }}')">
+                            DuoWrap #{{ forloop.revcounter }} ({{ duo_wrap.created_at }})
+                        </a>
+                        <button class="delete-button" onclick="deleteDuoWrap('{{ duo_wrap.unique_id }}')">Delete</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
-
-
-
-        <!-- Holiday Themes -->
         <!-- Holiday Themes -->
         <div class="card">
             <div class="card-header">
@@ -565,11 +666,11 @@
             </div>
             <div class="card-content">
                 <div class="holiday-grid">
-                    <div class="card holiday-card halloween">
+                    <div class="card holiday-card halloween" onclick="generateHolidayWrap('halloween')">
                         <div class="emoji">🎃</div>
                         <h3 class="holiday-title">Halloween</h3>
                     </div>
-                    <div class="card holiday-card christmas">
+                    <div class="card holiday-card christmas" onclick="generateHolidayWrap('christmas')">
                         <div class="emoji">🎄</div>
                         <h3 class="holiday-title">Christmas</h3>
                     </div>
@@ -577,5 +678,139 @@
             </div>
         </div>
     </div>
+    <script>
+        function generateHolidayWrap(holiday) {
+            toggleLoadingScreen();
+            const url = `/SpotifyWrappedApp/api/create_holidaywrap/${holiday}/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.wrapped_id) {
+                    console.log(data.wrapped_id)
+                    window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function generateNewWrap() {
+            toggleLoadingScreen();
+            const url = '/SpotifyWrappedApp/api/create_solowrap/';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.wrapped_id) {
+                    console.log(data.wrapped_id)
+                    window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function NavigateToWrap(wrapped_id) {
+            window.location.href = `/SpotifyWrappedApp/wrapped/${wrapped_id}/`;
+        }
+
+        function NavigateToDuoWrap(wrapped_id) {
+            window.location.href = `/SpotifyWrappedApp/duo_wrapped/${wrapped_id}/`;
+        }
+
+        function showDuoWrapped() {
+            // Implement this function as needed
+        }
+
+        function showSettings() {
+            // Implement this function as needed
+        }
+
+        function selectFriend() {
+            window.location.href = '/SpotifyWrappedApp/friend_select/';
+        }
+
+        function toggleLoadingScreen() {
+            const isLoading = true; // Replace this with your condition
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (isLoading) {
+                loadingContainer.innerHTML = `
+                    <div class="loading-popup">
+                        <div class="spinner"></div>
+                        <div class="loading-text">
+                            This may take a quick moment<span class="loading-dots"></span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                loadingContainer.innerHTML = '';
+            }
+        }
+        function guessTopArtistGame() {
+        // Navigate to the Guess Your Top Artist game page
+            const gameUrl = '/SpotifyWrappedApp/guessTop/';
+            window.location.href = gameUrl;
+        }
+
+        function deleteSoloWrap(wrapped_id) {
+            const url = `/SpotifyWrappedApp/api/delete_solowrap/${wrapped_id}/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: wrapped_id
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function deleteDuoWrap(wrapped_id) {
+            const url = `/SpotifyWrappedApp/api/delete_duowrap/${wrapped_id}/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: wrapped_id
+            })
+            .catch(error => console.error('Error:', error));
+
+        }
+
+        // Theme Toggle Script
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeSelect = document.getElementById('theme-select');
+            const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
+
+            // Apply the current theme
+            document.body.classList.add(`${currentTheme}-mode`);
+            themeSelect.value = currentTheme;
+
+            themeSelect.addEventListener('change', function(e) {
+                // Remove all theme classes
+                document.body.classList.remove('light-mode', 'dark-mode', 'grimace-mode');
+                // Add the selected theme class
+                const selectedTheme = e.target.value;
+                document.body.classList.add(`${selectedTheme}-mode`);
+                // Save the preference
+                localStorage.setItem('theme', selectedTheme);
+            });
+        });
+    </script>
 </body>
 </html>

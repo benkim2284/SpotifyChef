@@ -3,34 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <title>Your Spotify Wrapped</title>
-    <!-- Bootstrap CSS -->
+    <!-- Bootstrap CSS (Optional) -->
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body {
-            background: linear-gradient(135deg, #1DB954 0%, #191414 100%);
-            color: #FFFFFF;
-            font-family: 'Helvetica Neue', Arial, sans-serif;
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #121212;
+            --text-color: #FFFFFF;
+            --primary-color: #1DB954; /* Spotify green */
+            --secondary-color: #b3b3b3;
+            --card-bg-color: #1c1c1c;
+            --welcome-bg-color: #282828;
+            --button-bg-color: #1DB954;
+            --button-text-color: #FFFFFF;
+            --button-outline-color: #1DB954;
+            --icon-color: #FFFFFF;
+            --loading-popup-bg: rgba(31, 31, 31, 0.9);
+            --spinner-border-color: #1DB954;
+            --spinner-border-top-color: transparent;
+            --border-color: #333;
+        }
+
+        .light-mode {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --primary-color: #1DB954;
+            --secondary-color: #333333;
+            --card-bg-color: #f0f0f0;
+            --welcome-bg-color: #f7f7f7;
+            --button-bg-color: #1DB954;
+            --button-text-color: #FFFFFF;
+            --button-outline-color: #1DB954;
+            --icon-color: #1DB954;
+            --loading-popup-bg: rgba(255, 255, 255, 0.9);
+            --spinner-border-color: #1DB954;
+            --spinner-border-top-color: transparent;
+            --border-color: #cccccc;
+        }
+
+        /* Grimace Theme Variables */
+        .grimace-mode {
+            --bg-color: #4B0082; /* Indigo background */
+            --text-color: #FFD700; /* Gold text */
+            --primary-color: #800080; /* Purple */
+            --secondary-color: #DA70D6; /* Orchid */
+            --card-bg-color: #6A0DAD; /* Royal Purple */
+            --welcome-bg-color: #9932CC; /* Dark Orchid */
+            --button-bg-color: #800080; /* Purple */
+            --button-text-color: #FFD700; /* Gold */
+            --button-outline-color: #FFD700; /* Gold */
+            --icon-color: #FFD700; /* Gold */
+            --loading-popup-bg: rgba(75, 0, 130, 0.9); /* Indigo with opacity */
+            --spinner-border-color: #FFD700; /* Gold */
+            --spinner-border-top-color: transparent;
+            --border-color: #FFD700; /* Gold */
+        }
+
+        /* Reset and base styles */
+        body, html {
             margin: 0;
             padding: 0;
-            height: 100vh;
+            height: 100%;
+        }
+        body {
+            background-color: var(--bg-color);
+            color: var(--text-color);
+            font-family: 'Helvetica Neue', Arial, sans-serif;
             display: flex;
             justify-content: center;
             align-items: center;
-            overflow: hidden;
         }
         .container {
             width: 100%;
             max-width: 1100px;
-            padding: 40px 70px; /* Increased padding */
-            background-color: rgba(25, 20, 20, 0.9);
+            padding: 40px 70px;
+            background-color: var(--welcome-bg-color);
             border-radius: 30px;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
             position: relative;
         }
-
         .title {
             text-align: center;
-            color: #FFFFFF;
+            color: var(--primary-color);
             font-weight: bold;
             margin-bottom: 30px;
             font-size: 2.5em;
@@ -43,26 +97,25 @@
             border-radius: 10px;
         }
         .slide {
-            display: none;
-            padding: 40px;
-            text-align: center;
-            transition: background-color 0.3s ease;
-            border-radius: 10px;
-            height: 100%;
-            width: 100%;
+            opacity: 0;
             position: absolute;
+            width: 100%;
+            height: 100%;
+            left: 0;
+            top: 0;
+            transition: opacity 0.5s ease;
         }
-        .active {
-            display: block;
+        .slide.active {
+            opacity: 1;
+            position: relative;
         }
         /* Title (Exciting letters) */
         .title-slide h2 {
             font-size: 3em;
             margin-bottom: 20px;
-            color: #1DB954;
+            color: var(--primary-color);
             font-weight: bold;
             text-transform: uppercase;
-            animation: bounce 1s infinite;
             display: flex;
             justify-content: center;
             align-items: center;
@@ -73,20 +126,17 @@
         .description-slide p {
             font-size: 1.5em;
             line-height: 1.6em;
-            color: #FFFFFF;
-            padding: 0 40px; /* Add horizontal padding to create space on the sides */
-            margin-bottom: 30px; /* Optional: Adds space between the paragraph and the buttons */
-            max-height: 400px; /* Max height for the description slide */
-            overflow-y: auto; /* Enables vertical scrolling if content overflows */
+            color: var(--text-color);
+            padding: 0 40px;
+            margin-bottom: 30px;
+            max-height: 400px;
+            overflow-y: auto;
             white-space: pre-line;
-        }
-        @keyframes bounce {
-            0%, 100% {
-                transform: translateY(0);
-            }
-            50% {
-                transform: translateY(-20px);
-            }
+            text-align: center;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100%;
         }
         .prev, .next {
             cursor: pointer;
@@ -95,7 +145,7 @@
             width: 50px;
             height: 50px;
             font-size: 30px;
-            color: white;
+            color: var(--text-color);
             background-color: rgba(0, 0, 0, 0.6);
             border: none;
             border-radius: 50%;
@@ -104,6 +154,7 @@
             align-items: center;
             transform: translateY(-50%);
             transition: all 0.3s ease;
+            user-select: none;
         }
         .prev {
             left: 20px;
@@ -125,19 +176,91 @@
             height: 15px;
             width: 15px;
             margin: 0 5px;
-            background-color: #b3b3b3;
+            background-color: var(--secondary-color);
             border-radius: 50%;
             display: inline-block;
             transition: background-color 0.3s;
         }
         .active-dot {
-            background-color: #1DB954;
+            background-color: var(--primary-color);
+        }
+        /* Slide animations */
+        .slide-in-next {
+            animation: slideInNext 0.5s forwards;
+        }
+        @keyframes slideInNext {
+            from {
+                transform: translateX(100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        .slide-out-next {
+            animation: slideOutNext 0.5s forwards;
+        }
+        @keyframes slideOutNext {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(-100%);
+            }
+        }
+        .slide-in-prev {
+            animation: slideInPrev 0.5s forwards;
+        }
+        @keyframes slideInPrev {
+            from {
+                transform: translateX(-100%);
+            }
+            to {
+                transform: translateX(0);
+            }
+        }
+        .slide-out-prev {
+            animation: slideOutPrev 0.5s forwards;
+        }
+        @keyframes slideOutPrev {
+            from {
+                transform: translateX(0);
+            }
+            to {
+                transform: translateX(100%);
+            }
+        }
+
+        /* Theme Select Styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+        .theme-select {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: var(--card-bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
         }
     </style>
 </head>
 <body>
     <div class="container">
-        <h2 class="title">{{ name }}'s Spotify Wrapped From {{ date }}</h2>
+        <!-- Theme Selection -->
+        <div class="theme-switch-wrapper">
+            <label for="theme-select">Choose Theme:</label>
+            <select id="theme-select" class="theme-select">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="grimace">Grimace</option>
+            </select>
+        </div>
+
+        <h2 class="title">{{ name }}'s Spotify Wrapped from {{ date }}</h2>
 
         <div class="slideshow-container" id="slideshow-container">
             <!-- Slides will be generated here -->
@@ -152,50 +275,50 @@
         </div>
     </div>
 
-    <!-- Bootstrap JS (optional, for Bootstrap components that require JavaScript) -->
+    <!-- Bootstrap JS (Optional) -->
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 
     <script>
-        let slidesData = {
-            "Most Played Artist": "...",
-            "Favorite Songs": "The tracks that made your playlist unforgettable...",
-            "Total Listening Time": "A reflection of the time you spent listening to music.",
-            "New Discoveries": "Artists and songs you just couldn’t get enough of!",
-            "Most Active Hours": "When did you stream your most music?",
-            "Top Mood": "What was the vibe of your year?",
-            "Global Playlist Trends": "How do your listening habits compare globally?",
-            "Top Tracks": "Here are the tracks that kept you going."
-        }
+        let wrapData = {{ wrap_data|safe }};
+        let slidesData = [];
+        // Convert wrapData to an array of entries
+        Object.entries(wrapData).forEach(([title, description]) => {
+            slidesData.push({ type: 'title', content: title });
+            slidesData.push({ type: 'description', content: description });
+        });
 
         // Function to generate slides and dots dynamically
         function generateSlides() {
             let slideshowContainer = document.getElementById('slideshow-container');
             let dotsContainer = document.getElementById('dots-container');
 
-            let wrapData = {{ wrap_data | safe }};
-            console.log(wrapData)
-
-            // Generate slides (each category + description in groups of 2)
+            // Generate slides
             let slidesHTML = '';
 
-            Object.entries(wrapData).forEach(([title, description]) => {
-                // Title slide
-                slidesHTML += `
-                    <div class="slide title-slide active">
-                        <h2>${title}</h2>
-                    </div>
-                    <!-- Description slide -->
-                    <div class="slide description-slide active">
-                        <p>${description}</p>
-                    </div>
-                `;
+            slidesData.forEach((slide, index) => {
+                let slideClass = 'slide';
+                if (index === 0) slideClass += ' active';
+
+                if (slide.type === 'title') {
+                    slidesHTML += `
+                        <div class="${slideClass} title-slide">
+                            <h2>${slide.content}</h2>
+                        </div>
+                    `;
+                } else if (slide.type === 'description') {
+                    slidesHTML += `
+                        <div class="${slideClass} description-slide">
+                            <p>${slide.content}</p>
+                        </div>
+                    `;
+                }
             });
 
             slideshowContainer.insertAdjacentHTML('afterbegin', slidesHTML);
 
             // Generate dots
             let dotsHTML = '';
-            const numSlides = Object.keys(slidesData).length * 2; // 2 slides per entry (title + description)
+            const numSlides = slidesData.length;
             for (let i = 0; i < numSlides; i++) {
                 dotsHTML += `<span class="dot${i === 0 ? ' active-dot' : ''}" onclick="currentSlide(${i + 1})"></span>`;
             }
@@ -206,52 +329,89 @@
         generateSlides();
 
         let slideIndex = 1;
+        let isAnimating = false;
 
         function showSlide(n) {
+            if (isAnimating) return; // Prevent navigation during animation
+
             let i;
             let slides = document.getElementsByClassName("slide");
             let dots = document.getElementsByClassName("dot");
+            let currentSlide = slideIndex - 1;
+            let newSlideIndex = n - 1;
 
-            if (n > slides.length) { slideIndex = 1 }
-            if (n < 1) { slideIndex = slides.length }
+            if (n > slides.length) { newSlideIndex = 0; slideIndex = 1; }
+            if (n < 1) { newSlideIndex = slides.length - 1; slideIndex = slides.length; }
 
-            for (i = 0; i < slides.length; i++) {
-                slides[i].classList.remove('active');
+            if (newSlideIndex === currentSlide) return; // Do nothing if the same slide
+
+            let direction = newSlideIndex > currentSlide ? 'next' : 'prev';
+
+            // Handle wrap-around
+            if (currentSlide === slides.length - 1 && newSlideIndex === 0) {
+                direction = 'next';
+            } else if (currentSlide === 0 && newSlideIndex === slides.length - 1) {
+                direction = 'prev';
             }
 
-            for (i = 0; i < dots.length; i++) {
-                dots[i].classList.remove('active-dot');
-            }
+            // Remove 'active' class from current slide
+            slides[currentSlide].classList.remove('active');
+            slides[currentSlide].classList.add(`slide-out-${direction}`);
 
-            slides[slideIndex - 1].classList.add('active');
-            dots[slideIndex - 1].classList.add('active-dot');
+            // Prepare the new slide
+            slides[newSlideIndex].classList.add(`slide-in-${direction}`);
+            slides[newSlideIndex].style.opacity = '1';
 
-            // Change entire slide's background color to a random color
-            let randomColor = getRandomColor();
-            slides[slideIndex - 1].style.backgroundColor = randomColor;
+            isAnimating = true;
+
+            // Wait for animation to complete
+            setTimeout(() => {
+                // Clean up classes
+                slides[currentSlide].classList.remove(`slide-out-${direction}`);
+                slides[currentSlide].style.opacity = '0';
+
+                slides[newSlideIndex].classList.remove(`slide-in-${direction}`);
+                slides[newSlideIndex].classList.add('active');
+
+                // Update dots
+                for (i = 0; i < dots.length; i++) {
+                    dots[i].classList.remove('active-dot');
+                }
+                dots[newSlideIndex].classList.add('active-dot');
+
+                isAnimating = false;
+            }, 500); // Duration of the animation in milliseconds
+
+            slideIndex = newSlideIndex + 1;
         }
 
         function changeSlide(n) {
-            showSlide(slideIndex += n);
+            showSlide(slideIndex + n);
         }
 
         function currentSlide(n) {
-            showSlide(slideIndex = n);
+            showSlide(n);
         }
 
-        // Generate a random background color
-        function getRandomColor() {
-            const letters = '0123456789ABCDEF';
-            let color = '#';
-            for (let i = 0; i < 6; i++) {
-                color += letters[Math.floor(Math.random() * 16)];
-            }
-            return color;
-        }
+        // Theme Toggle Script
+        document.addEventListener('DOMContentLoaded', function() {
+            const themeSelect = document.getElementById('theme-select');
+            const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
 
-        // Start slideshow
-        showSlide(slideIndex);
+            // Apply the current theme
+            document.body.classList.add(`${currentTheme}-mode`);
+            themeSelect.value = currentTheme;
 
+            themeSelect.addEventListener('change', function(e) {
+                // Remove all theme classes
+                document.body.classList.remove('light-mode', 'dark-mode', 'grimace-mode');
+                // Add the selected theme class
+                const selectedTheme = e.target.value;
+                document.body.classList.add(`${selectedTheme}-mode`);
+                // Save the preference
+                localStorage.setItem('theme', selectedTheme);
+            });
+        });
     </script>
 </body>
 </html>

@@ -17,5 +17,8 @@ urlpatterns = [
     path('api/create_duowrap/', views.create_duowrap, name='create_duowrap'),
     path('duo_wrapped/<str:wrapped_id>/', views.duo_wrapped_view, name='duo_wrapped'),
     path('delete_account/', views.delete_account_view, name='delete_account'),
-
+    path('api/create_holidaywrap/<str:holiday>/', views.create_holidaywrap, name='create_holidaywrap'),
+    path('api/delete_solowrap/<str:wrapped_id>/', views.delete_solowrap, name='delete_solo_wrap'),
+    path('api/delete_duowrap/<str:wrapped_id>/', views.delete_duowrap, name='delete_duo_wrap'),
+    path('guessTop/', views.guessTop, name='guessTop')
 ]
