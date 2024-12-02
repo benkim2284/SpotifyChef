@@ -498,7 +498,7 @@ def toptracks_view(request):
 def logout_view(request):
     # Remove the access token from the session
     request.session.flush()
-    return redirect(reverse('SpotifyWrappedApp:login_screen'))
+    return redirect('https://accounts.spotify.com/logout')
 
 @csrf_exempt
 def create_holidaywrap(request, holiday):

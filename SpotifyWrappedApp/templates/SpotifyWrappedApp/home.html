@@ -549,6 +549,11 @@
     </style>
 </head>
 <body>
+    <header style="display: flex; justify-content: flex-end; padding: 1rem;">
+    <button class="button button-primary" onclick="window.location.href='/SpotifyWrappedApp/logout/'">
+        Logout
+    </button>
+</header>
     <div id="loadingContainer"></div>
     <div class="welcome-section">
         <h1 class="welcome-message">Welcome, <span id="user-name">{{ name }}</span>!</h1>
