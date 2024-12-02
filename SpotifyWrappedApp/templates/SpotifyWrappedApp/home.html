@@ -493,6 +493,11 @@
             gap: 1rem;
         }
 
+    function deleteAccount() {
+        window.location.href = '/SpotifyWrappedApp/delete_account/';
+    }
+
+    function showDuoWrapped() {
         .theme-switch {
             display: inline-block;
             height: 34px;
@@ -604,9 +609,9 @@
                         <i class="icon fas fa-user"></i>
                         <h3 class="font-bold">Select Friend for Duo-Wrap</h3>
                     </div>
-                    <div class="card dashboard-card" onclick="showSettings()">
+                    <div class="card dashboard-card" onclick="deleteAccount()">
                         <i class="icon fas fa-cog"></i>
-                        <h3 class="font-bold">Settings</h3>
+                        <h3 class="font-bold">Delete Account</h3>
                     </div>
                     <div class="card dashboard-card" onclick="guessTopArtistGame()">
                         <i class="icon fas fa-gamepad"></i>
