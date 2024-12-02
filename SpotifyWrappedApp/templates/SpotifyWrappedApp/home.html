@@ -44,6 +44,25 @@
             --border-color: #cccccc;
         }
 
+        /* Grimace Theme Variables */
+        .grimace-mode {
+            --bg-color: #4B0082; /* Indigo background */
+            --text-color: #FFD700; /* Gold text */
+            --primary-color: #800080; /* Purple */
+            --secondary-color: #DA70D6; /* Orchid */
+            --card-bg-color: #6A0DAD; /* Royal Purple */
+            --welcome-bg-color: #9932CC; /* Dark Orchid */
+            --button-bg-color: #800080; /* Purple */
+            --button-text-color: #FFD700; /* Gold */
+            --button-outline-color: #FFD700; /* Gold */
+            --icon-color: #FFD700; /* Gold */
+            --holiday-text-color: #FFD700; /* Gold */
+            --loading-popup-bg: rgba(75, 0, 130, 0.9); /* Indigo with opacity */
+            --spinner-border-color: #FFD700; /* Gold */
+            --spinner-border-top-color: transparent;
+            --border-color: #FFD700; /* Gold */
+        }
+
         /* Reset and base styles */
         * {
             margin: 0;
@@ -465,6 +484,68 @@
             }
         }
 
+        /* Theme Switch Styles */
+        .theme-switch-wrapper {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 1rem;
+            gap: 1rem;
+        }
+
+        .theme-switch {
+            display: inline-block;
+            height: 34px;
+            position: relative;
+            width: 60px;
+        }
+
+        .theme-switch input {
+            display: none;
+        }
+
+        .slider {
+            background-color: var(--secondary-color);
+            bottom: 0;
+            cursor: pointer;
+            left: 0;
+            position: absolute;
+            right: 0;
+            top: 0;
+            transition: .4s;
+            border-radius: 34px;
+        }
+
+        .slider:before {
+            background-color: var(--button-bg-color);
+            bottom: 4px;
+            content: "";
+            height: 26px;
+            left: 4px;
+            position: absolute;
+            transition: .4s;
+            width: 26px;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary-color);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        /* Additional Styles for Theme Select */
+        .theme-select {
+            padding: 0.5rem;
+            border-radius: 0.5rem;
+            background-color: var(--welcome-bg-color);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            font-size: 1rem;
+        }
+
     </style>
 </head>
 <body>
@@ -473,11 +554,12 @@
         <h1 class="welcome-message">Welcome, <span id="user-name">{{ name }}</span>!</h1>
         <!-- Theme Toggle Switch -->
         <div class="theme-switch-wrapper">
-            <label class="theme-switch" for="theme-toggle">
-                <input type="checkbox" id="theme-toggle" />
-                <div class="slider round"></div>
-            </label>
-            <em>Toggle Light/Dark Theme</em>
+            <label for="theme-select">Choose Theme:</label>
+            <select id="theme-select" class="theme-select">
+                <option value="dark">Dark</option>
+                <option value="light">Light</option>
+                <option value="grimace">Grimace</option>
+            </select>
         </div>
     </div>
     <div class="space-y-8">
@@ -634,24 +716,21 @@
 
         // Theme Toggle Script
         document.addEventListener('DOMContentLoaded', function() {
-            const toggleSwitch = document.getElementById('theme-toggle');
-            const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+            const themeSelect = document.getElementById('theme-select');
+            const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : 'dark';
 
-            if (currentTheme) {
-                if (currentTheme === 'light') {
-                    document.body.classList.add('light-mode');
-                    toggleSwitch.checked = true;
-                }
-            }
+            // Apply the current theme
+            document.body.classList.add(`${currentTheme}-mode`);
+            themeSelect.value = currentTheme;
 
-            toggleSwitch.addEventListener('change', function(e) {
-                if (e.target.checked) {
-                    document.body.classList.add('light-mode');
-                    localStorage.setItem('theme', 'light');
-                } else {
-                    document.body.classList.remove('light-mode');
-                    localStorage.setItem('theme', 'dark');
-                }
+            themeSelect.addEventListener('change', function(e) {
+                // Remove all theme classes
+                document.body.classList.remove('light-mode', 'dark-mode', 'grimace-mode');
+                // Add the selected theme class
+                const selectedTheme = e.target.value;
+                document.body.classList.add(`${selectedTheme}-mode`);
+                // Save the preference
+                localStorage.setItem('theme', selectedTheme);
             });
         });
     </script>
