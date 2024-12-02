@@ -645,3 +645,16 @@ def guessTop(request):
     except Exception as e:
         return HttpResponseBadRequest(f"Spotify Exception while fetching top tracks: {e}")
 
+@csrf_exempt
+def delete_solowrap(request, wrapped_id):
+        # Logic to delete the wrap
+    SoloWraps.objects.filter(unique_id=wrapped_id).delete()
+    return JsonResponse({'message': 'Wrap deleted successfully'})
+
+@csrf_exempt
+def delete_duowrap(request, wrapped_id):
+        # Logic to delete the wrap
+    DuoWraps.objects.filter(unique_id=wrapped_id).delete()
+    return JsonResponse({'message': 'DuoWrap deleted successfully'})
+
+

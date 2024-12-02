@@ -546,6 +546,28 @@
             font-size: 1rem;
         }
 
+        .wrap-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .delete-button {
+            background-color: #FF4D4D;
+            color: #FFFFFF;
+            border: none;
+            border-radius: 5px;
+            padding: 5px 10px;
+            cursor: pointer;
+            font-size: 0.9em;
+            transition: background-color 0.3s ease;
+        }
+
+        .delete-button:hover {
+            background-color: #FF0000;
+        }
+
     </style>
 </head>
 <body>
@@ -596,35 +618,41 @@
 
         <!-- Duo-Wrapped -->
         <div class="duo-grid">
-            <div class="stats-container">
-                <h3>Past Wraps</h3>
-                <div class="past-wraps-container">
-                    {% if wraps %}
-                        {% for wrap in wraps %}
-                            <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
-                                Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
-                            </a>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="stats-container">
-                <h3>Past Duo-Wraps</h3>
-                <div class="past-duo-wraps-container">
-                    {% if duo_wraps %}
-                        {% for duo_wrap in duo_wraps %}
-                            <a class="past-wrap-link" onclick="NavigateToDuoWrap('{{ duo_wrap.unique_id }}')">
-                                DuoWrap #{{ forloop.revcounter }} ({{ duo_wrap.created_at }})
-                            </a>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
-                    {% endif %}
-                </div>
-            </div>
+    <div class="stats-container">
+        <h3>Past Wraps</h3>
+        <div class="past-wraps-container">
+            {% if wraps %}
+                {% for wrap in wraps %}
+                    <div class="wrap-item">
+                        <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
+                            Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
+                        </a>
+                        <button class="delete-button" onclick="deleteSoloWrap('{{ wrap.unique_id }}')">Delete</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
+            {% endif %}
         </div>
+    </div>
+    <div class="stats-container">
+        <h3>Past Duo-Wraps</h3>
+        <div class="past-duo-wraps-container">
+            {% if duo_wraps %}
+                {% for duo_wrap in duo_wraps %}
+                    <div class="wrap-item">
+                        <a class="past-wrap-link" onclick="NavigateToDuoWrap('{{ duo_wrap.unique_id }}')">
+                            DuoWrap #{{ forloop.revcounter }} ({{ duo_wrap.created_at }})
+                        </a>
+                        <button class="delete-button" onclick="deleteDuoWrap('{{ duo_wrap.unique_id }}')">Delete</button>
+                    </div>
+                {% endfor %}
+            {% else %}
+                <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
+            {% endif %}
+        </div>
+    </div>
+</div>
 
         <!-- Holiday Themes -->
         <div class="card">
@@ -728,8 +756,35 @@
         }
         function guessTopArtistGame() {
         // Navigate to the Guess Your Top Artist game page
-        const gameUrl = '/SpotifyWrappedApp/guessTop/';
-        window.location.href = gameUrl;
+            const gameUrl = '/SpotifyWrappedApp/guessTop/';
+            window.location.href = gameUrl;
+        }
+
+        function deleteSoloWrap(wrapped_id) {
+            const url = `/SpotifyWrappedApp/api/delete_solowrap/${wrapped_id}/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: wrapped_id
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function deleteDuoWrap(wrapped_id) {
+            const url = `/SpotifyWrappedApp/api/delete_duowrap/${wrapped_id}/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                data: wrapped_id
+            })
+            .catch(error => console.error('Error:', error));
+
         }
 
         // Theme Toggle Script
