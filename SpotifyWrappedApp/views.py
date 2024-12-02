@@ -451,16 +451,40 @@ Also include the last slide to dynamically describe how someone who listens to m
     return JsonResponse({'wrapped_id': new_wrap.unique_id}, status=200)
 
 def guessTop(request):
-    access_token = get_authorization_code()
-
-    if access_token is None:
-        return HttpResponseBadRequest("Authorization code not provided.")
-
-    sp = Spotify(auth=access_token)
+    code = request.GET.get('code')
+    client_id = os.getenv('client_id')
+    client_secret = os.getenv('client_secret')
+    redirect_uri = "http://localhost:8000/SpotifyWrappedApp/home"
+    if code:
+        # Exchange the code for an access token
+        token_url = "https://accounts.spotify.com/api/token"
+        data = {
+            'grant_type': 'authorization_code',
+            'code': code,
+            'redirect_uri': redirect_uri
+        }
+        headers = {
+            'Authorization': 'Basic ' + base64.b64encode(f"{client_id}:{client_secret}".encode()).decode(),
+            'Content-Type': 'application/x-www-form-urlencoded'
+        }
+        response = requests.post(token_url, data=data, headers=headers)
+        if response.status_code != 200:
+            return redirect("/SpotifyWrappedApp/home")
+            # return HttpResponseBadRequest("Could not retrieve access token.")
+        token_info = response.json()
+        access_token = token_info['access_token']
+        refresh_token = token_info['refresh_token']
+        expires_in = token_info['expires_in']
+        request.session['access_token'] = access_token
+        request.session['refresh_token'] = refresh_token
+        request.session['expires_at'] = int(time.time()) + expires_in
+    else:
+        access_token = get_access_token(request)
+        if not access_token:
+            return HttpResponseBadRequest("Authorization code not provided or token expired.")
 
     try:
-        # Fetch top tracks for the current user
-        results = sp.current_user_top_tracks(limit=50)
+        results = get_current_user_top_tracks(access_token, limit=15)
         top_tracks = results['items']  # List of track objects
 
         if not top_tracks:
@@ -490,6 +514,6 @@ def guessTop(request):
             'tracks_json': tracks_json
         })
 
-    except SpotifyException as e:
+    except Exception as e:
         return HttpResponseBadRequest(f"Spotify Exception while fetching top tracks: {e}")
 
