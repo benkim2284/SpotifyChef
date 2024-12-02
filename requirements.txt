@@ -112,9 +112,6 @@ mypy-extensions==1.0.0
 nest-asyncio==1.6.0
 networking==0.0.1
 networkx==3.1
-numba==0.60.0
-nump==5.5.5.5
-numpy==1.24.4
 oauth==1.0.1
 oauthlib==3.2.2
 onnxruntime==1.16.1
