@@ -16,5 +16,6 @@ urlpatterns = [
     path('friend_select/', views.friend_select_view, name='friend_select_view'),
     path('api/create_duowrap/', views.create_duowrap, name='create_duowrap'),
     path('duo_wrapped/<str:wrapped_id>/', views.duo_wrapped_view, name='duo_wrapped'),
+    path('delete_account/', views.delete_account_view, name='delete_account'),
 
 ]

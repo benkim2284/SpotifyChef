@@ -1,3 +1,4 @@
+from django.contrib.auth.decorators import login_required
 from django.shortcuts import render, redirect
 from django.http import HttpResponseBadRequest, JsonResponse
 from spotipy import Spotify
@@ -7,6 +8,7 @@ from django.urls import reverse
 from dotenv import load_dotenv
 import openai
 from .models import User, SoloWraps, DuoWraps
+from django.contrib import messages
 from django.core.cache import cache
 import os
 import json
@@ -490,3 +492,26 @@ def logout_view(request):
     logout_url = "https://accounts.spotify.com/en/logout"
     redirect_url = f"{logout_url}?continue={request.build_absolute_uri(reverse('SpotifyWrappedApp:oauth_screen'))}"
     return redirect(redirect_url)
+
+
+#@login_required
+def delete_account_view(request):
+    if request.method == "POST":
+        current_user = request.user
+
+        try:
+            user_to_delete = User.objects.get(id=current_user.id)
+            user_to_delete.delete()
+
+            # Optional: Add a message to inform the user of the successful deletion
+            messages.success(request, "Your account has been deleted successfully.")
+
+            # Redirect to a goodbye page or homepage after account deletion
+            return redirect('http://localhost:8000/SpotifyWrappedApp/login')
+        except User.DoesNotExist:
+            # If user does not exist (edge case)
+            messages.error(request, "An error occurred while deleting your account.")
+            return redirect('profile')  # Redirect back to user profile or dashboard
+
+    # Render a confirmation template if it's not a POST request
+    return render(request, 'SpotifyWrappedApp/delete_account.html')
