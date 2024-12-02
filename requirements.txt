@@ -119,7 +119,6 @@ opencv-python==4.9.0.80
 orjson==3.9.9
 overrides==7.4.0
 packaging==23.2
-pandas==2.0.3
 parso==0.8.4
 pexpect==4.9.0
 Pillow==10.0.1
