@@ -131,26 +131,26 @@ def create_duowrap(request):
             print("Debugging: 'selected_friend' key missing or empty")  # Debugging: Log missing friend selection
             return HttpResponseBadRequest("Friend selection not provided.")
 
-        # Step 3: Get the current user's authorization token
-        access_token = get_authorization_code()
-        if access_token is None:
-            print("Debugging: Authorization token not provided")  # Debugging: Log missing authorization
-            return HttpResponseBadRequest("Authorization code not provided.")
 
-        # Step 4: Create Spotify client for current user
-        sp = Spotify(auth=access_token)
 
-        # Step 5: Get current user info from Spotify
-        current_user_info = sp.current_user()
+
+
+
+        access_token = get_access_token(request)
+        if not access_token:
+            return HttpResponseBadRequest("Authorization code not provided or token expired.")
+        try:
+            current_user_info = get_current_user(access_token)
+        except Exception as e:
+            return HttpResponseBadRequest(str(e))
         curr_user_id = current_user_info['id']
-        curr_user_display_name = current_user_info['display_name']
 
-        # Step 6: Check if current user exists in the database
+        #Person creating the duo_wrap
         try:
             existing_user = User.objects.get(id=curr_user_id)
         except User.DoesNotExist:
-            print(f"Debugging: Current user with ID {curr_user_id} does not exist in database")  # Debugging
-            return HttpResponseBadRequest("Current user not found in database.")
+            return HttpResponseBadRequest("User does not exist.")
+
 
         # Step 7: Get the selected friend's info from the database
         try:
@@ -174,11 +174,13 @@ def create_duowrap(request):
                             Provide engaging text for each slide and include relevant emojis. Your output should be just a JSON that is formatted like '{{"category_name": “analysis...”, "category_name": “analysis...”, ...}}'.
                             Be sure to provide synergies of genres and common songs or anything related between the current user and the selected friend and display according to the format instructed.
 
-                            The track_info data for the current user ({curr_user_display_name}) is: {existing_user.spotify_data}
+                            The track_info data for the current user ({existing_user.name}) is: {existing_user.spotify_data}
                             The track_info data for the selected friend ({friend_user.name}) is: {friend_user.spotify_data}
 
                             Your output should be just the JSON and nothing else. Make sure to not start your response with '''json or anything.
                             It should start with just the json itself.
+                            
+                            Also include the last slide to dynamically describe how someone who listens to both my and my duo partner's music tends to get along/act/think/dress kind of like a horoscope.
                             """
                 }
             ],
@@ -363,13 +365,14 @@ def home_view(request):
 
     # Retrieve existing wraps for the user
     existing_user_wraps = SoloWraps.objects.filter(user=new_existing_user).order_by('-created_at')
-    print(existing_user_wraps)
+    existing_user_duo_wraps = DuoWraps.objects.filter(user_1=new_existing_user) | DuoWraps.objects.filter(user_2=new_existing_user).order_by('-created_at')
 
     # Render the home view with the relevant information
     return render(request, 'SpotifyWrappedApp/home.html',
                   {
                       'name': curr_user_display_name,
-                      "wraps": existing_user_wraps
+                      "wraps": existing_user_wraps,
+                      "duo_wraps": existing_user_duo_wraps
                   })
 
 def wrapped_view(request, wrapped_id):
@@ -541,7 +544,7 @@ The track_info data for the user’s top 15 songs is: {existing_user.spotify_dat
 Your output should be just the JSON and nothing else. Make sure to not start your response with ```json or anything.
 It should start with just the JSON itself.
 
-If the JSON output has no halloween related songs however, ignore this and artificially populate the responses with random haloween songs.
+If the JSON output has no halloween related songs however, ignore this and artificially populate the responses with random halloween songs.
 Also include the last slide to dynamically describe how someone who listens to my kind of music tends to act/think/dress kind of like a horoscope.
 """
     else:

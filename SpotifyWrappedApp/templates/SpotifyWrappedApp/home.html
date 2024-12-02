@@ -484,10 +484,6 @@
             }
         }
 
-    function selectFriend() {
-        window.location.href = '/SpotifyWrappedApp/friend_select/';
-    }
-
         /* Theme Switch Styles */
         .theme-switch-wrapper {
             display: flex;
@@ -600,7 +596,7 @@
                 <div class="past-wraps-container">
                     {% if wraps %}
                         {% for wrap in wraps %}
-                            <a class="past-wrap-link" onclick="generateNewDuoWrap('{{ wrap.unique_id }}')">
+                            <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
                                 Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
                             </a>
                         {% endfor %}
@@ -612,10 +608,10 @@
             <div class="stats-container">
                 <h3>Past Duo-Wraps</h3>
                 <div class="past-duo-wraps-container">
-                    {% if wraps %}
-                        {% for wrap in wraps %}
-                            <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
-                                {{ wrap }}
+                    {% if duo_wraps %}
+                        {% for duo_wrap in duo_wraps %}
+                            <a class="past-wrap-link" onclick="NavigateToDuoWrap('{{ duo_wrap.unique_id }}')">
+                                DuoWrap #{{ forloop.revcounter }} ({{ duo_wrap.created_at }})
                             </a>
                         {% endfor %}
                     {% else %}
@@ -693,12 +689,20 @@
             window.location.href = `/SpotifyWrappedApp/wrapped/${wrapped_id}/`;
         }
 
+        function NavigateToDuoWrap(wrapped_id) {
+            window.location.href = `/SpotifyWrappedApp/duo_wrapped/${wrapped_id}/`;
+        }
+
         function showDuoWrapped() {
             // Implement this function as needed
         }
 
         function showSettings() {
             // Implement this function as needed
+        }
+
+        function selectFriend() {
+            window.location.href = '/SpotifyWrappedApp/friend_select/';
         }
 
         function toggleLoadingScreen() {
