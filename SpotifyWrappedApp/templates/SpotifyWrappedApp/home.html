@@ -1,11 +1,49 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
+    <!-- Existing head content -->
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped</title>
-    <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
+        /* CSS Variables for Theming */
+        :root {
+            --bg-color: #121212;
+            --text-color: white;
+            --primary-color: #1DB954; /* Spotify green */
+            --secondary-color: #b3b3b3;
+            --card-bg-color: #1c1c1c;
+            --welcome-bg-color: #282828;
+            --button-bg-color: #1DB954;
+            --button-text-color: white;
+            --button-outline-color: #1DB954;
+            --icon-color: white;
+            --holiday-text-color: white;
+            --loading-popup-bg: rgba(31, 31, 31, 0.9);
+            --spinner-border-color: #1DB954;
+            --spinner-border-top-color: transparent;
+            --border-color: #333;
+        }
+
+        .light-mode {
+            --bg-color: #ffffff;
+            --text-color: #000000;
+            --primary-color: #1DB954;
+            --secondary-color: #333333;
+            --card-bg-color: #f0f0f0;
+            --welcome-bg-color: #f7f7f7;
+            --button-bg-color: #1DB954;
+            --button-text-color: white;
+            --button-outline-color: #1DB954;
+            --icon-color: #1DB954;
+            --holiday-text-color: white;
+            --loading-popup-bg: rgba(255, 255, 255, 0.9);
+            --spinner-border-color: #1DB954;
+            --spinner-border-top-color: transparent;
+            --border-color: #cccccc;
+        }
+
         /* Reset and base styles */
         * {
             margin: 0;
@@ -13,37 +51,12 @@
             box-sizing: border-box;
         }
 
-        /* CSS Variables for theming */
-        :root {
-            --background-color: #121212;
-            --text-color: #ffffff;
-            --card-background: #1c1c1c;
-            --secondary-background: #282828;
-            --accent-color: #1DB954;
-            --hover-background: #1DB954;
-            --hover-text-color: #000000;
-            --link-text-color: #ffffff; /* Added variable for link text color in dark mode */
-        }
-
-        /* Light mode variables */
-        .light-mode {
-            --background-color: #f0f0f0;
-            --text-color: #000000;
-            --card-background: #ffffff;
-            --secondary-background: #e0e0e0;
-            --accent-color: #1DB954;
-            --hover-background: #1DB954;
-            --hover-text-color: #ffffff;
-            --link-text-color: #000000; /* Set link text color to black in light mode */
-        }
-
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.5;
             padding: 2rem;
-            background-color: var(--background-color);
+            background-color: var(--bg-color);
             color: var(--text-color);
-            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .space-y-8 > * + * {
@@ -53,7 +66,7 @@
         .welcome-section {
             text-align: center;
             padding: 1.5rem;
-            background-color: var(--secondary-background);
+            background-color: var(--welcome-bg-color);
             border-radius: 1rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -63,16 +76,22 @@
             font-size: 3rem;
             font-weight: 800;
             margin: 0;
-            color: var(--accent-color);
+            color: var(--primary-color);
+        }
+
+        .welcome-subtitle {
+            font-size: 1rem;
+            margin-top: 0.5rem;
+            color: var(--secondary-color);
         }
 
         #user-name {
-            color: #1ED760;
+            color: var(--primary-color);
         }
 
         /* Card styles */
         .card {
-            background: var(--card-background);
+            background: var(--card-bg-color);
             border-radius: 1rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -81,13 +100,13 @@
 
         .card-header {
             padding: 1.5rem;
-            border-bottom: 1px solid #333;
+            border-bottom: 1px solid var(--border-color);
         }
 
         .card-title {
             font-size: 1.5rem;
             font-weight: bold;
-            color: var(--accent-color);
+            color: var(--primary-color);
         }
 
         .card-content {
@@ -96,6 +115,50 @@
 
         .space-y-4 > * + * {
             margin-top: 1rem;
+        }
+
+        /* Landing page styles */
+        .hero-section {
+            height: 12rem;
+            background: linear-gradient(to right, var(--primary-color), #191414);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border-radius: 1rem;
+            margin-bottom: 2rem;
+        }
+
+        .hero-title {
+            font-size: 3rem;
+            font-weight: bold;
+            color: var(--text-color);
+        }
+
+        /* Button styles */
+        .button-container {
+            display: flex;
+            gap: 1rem;
+            justify-content: center;
+        }
+
+        .button {
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            cursor: pointer;
+            border: none;
+            text-transform: uppercase;
+        }
+
+        .button-primary {
+            background-color: var(--button-bg-color);
+            color: var(--button-text-color);
+        }
+
+        .button-outline {
+            background-color: transparent;
+            border: 1px solid var(--button-outline-color);
+            color: var(--button-outline-color);
         }
 
         /* Dashboard grid */
@@ -120,10 +183,11 @@
         .dashboard-card {
             padding: 1rem;
             text-align: center;
-            background-color: var(--card-background);
+            background-color: var(--card-bg-color);
             border-radius: 0.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            cursor: pointer;
         }
 
         .dashboard-card:hover {
@@ -136,23 +200,71 @@
             height: 2rem;
             margin-bottom: 0.5rem;
             display: inline-block;
-            color: var(--text-color);
+            color: var(--icon-color);
         }
 
         .font-bold {
             font-weight: 700;
         }
 
-        /* Stats container */
+        /* Wrapped presentation */
+        .presentation-container {
+            position: relative;
+            height: 24rem;
+            background: linear-gradient(to right, var(--primary-color), #191414);
+            border-radius: 1rem;
+        }
+
+        .presentation-content {
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .slide-indicators {
+            display: flex;
+            gap: 0.5rem;
+            justify-content: center;
+        }
+
+        .indicator {
+            width: 0.5rem;
+            height: 0.5rem;
+            border-radius: 9999px;
+            background-color: var(--text-color);
+        }
+
+        .indicator.inactive {
+            opacity: 0.5;
+        }
+
+        /* Duo-wrapped */
+        .duo-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 1rem;
+        }
+
         .stats-container {
             padding: 1rem;
-            background-color: var(--card-background);
-            border-radius: 0.5rem;
+            background-color: var(--card-bg-color);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
+            overflow-y: auto;
+            max-height: 300px;
             transition: background-color 0.3s ease;
         }
 
         .stats-container:hover {
-            background-color: var(--secondary-background);
+            background-color: var(--welcome-bg-color);
+        }
+
+        .stats-bar {
+            height: 1rem;
+            border-radius: 0.25rem;
+            margin-top: 0.5rem;
         }
 
         /* Holiday themes */
@@ -170,7 +282,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
-            color: var(--text-color);
+            cursor: pointer;
         }
 
         .holiday-card:hover {
@@ -185,48 +297,74 @@
 
         .halloween {
             background: linear-gradient(135deg, #ff7a00, #ffcc00);
-            color: white;
+            color: var(--holiday-text-color);
             background-size: 200% 200%;
             animation: halloweenGlow 1.5s infinite alternate;
             position: relative;
         }
 
+        .halloween h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
+        }
+
         .christmas {
             background: linear-gradient(135deg, #ff0000, #00b300);
-            color: white;
+            color: var(--holiday-text-color);
             background-size: 200% 200%;
             animation: christmasGlow 1.5s infinite alternate;
             position: relative;
         }
 
-        /* Glow animations */
-        @keyframes halloweenGlow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+        .christmas h3 {
+            font-size: 1.5rem;
+            font-weight: bold;
+            letter-spacing: 0.5px;
         }
 
+        /* Glow animation for Halloween */
+        @keyframes halloweenGlow {
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
+        }
+
+        /* Glow animation for Christmas */
         @keyframes christmasGlow {
-            0% { background-position: 0% 50%; }
-            100% { background-position: 100% 50%; }
+            0% {
+                background-position: 0% 50%;
+            }
+            100% {
+                background-position: 100% 50%;
+            }
         }
 
         /* Link styles */
-        .past-wrap-link {
+        .past-wrap-link, .past-duo-wrap-link {
             display: block;
             padding: 0.8rem 1rem;
             font-size: 1rem;
             font-weight: 500;
             text-decoration: none;
-            color: var(--link-text-color); /* Updated to use the link text color variable */
-            background-color: #1c1c1c;
+            color: var(--text-color);
+            background-color: var(--card-bg-color);
             margin-bottom: 0.5rem;
             border-radius: 0.5rem;
             transition: background-color 0.3s ease, color 0.3s ease;
+            cursor: pointer;
         }
 
-        .past-wrap-link:hover {
-            background-color: var(--hover-background);
-            color: var(--hover-text-color);
+        .past-wrap-link:hover, .past-duo-wrap-link:hover {
+            background-color: var(--primary-color);
+            color: var(--bg-color);
+        }
+
+        .past-wrap-link:active, .past-duo-wrap-link:active {
+            background-color: #14833b;
         }
 
         /* Title styles */
@@ -234,74 +372,114 @@
             font-size: 1.25rem;
             font-weight: bold;
             margin-bottom: 1rem;
-            color: var(--accent-color);
+            color: var(--primary-color);
+        }
+
+        /* Scrollbar styles */
+        .stats-container::-webkit-scrollbar {
+            width: 8px;
+        }
+
+        .stats-container::-webkit-scrollbar-thumb {
+            background-color: var(--primary-color);
+            border-radius: 8px;
+        }
+
+        .stats-container::-webkit-scrollbar-thumb:hover {
+            background-color: #14833b;
+        }
+
+        .stats-container::-webkit-scrollbar-track {
+            background-color: var(--card-bg-color);
         }
 
         .no-wraps-message {
             font-size: 1.1rem;
-            color: #ccc;
+            color: var(--secondary-color);
             font-weight: 700;
         }
 
-        /* Toggle Switch */
-        .toggle-switch {
-            position: absolute;
-            top: 20px;
-            right: 20px;
+        .loading-popup {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
             display: flex;
+            flex-direction: column;
+            justify-content: center;
             align-items: center;
-            font-size: 1rem;
-            cursor: pointer;
-            color: var(--text-color);
+            background-color: var(--loading-popup-bg);
+            z-index: 50;
         }
 
-        .toggle-switch input[type="checkbox"] {
-            appearance: none;
-            width: 40px;
-            height: 20px;
-            background-color: #ccc;
-            border-radius: 10px;
-            position: relative;
-            outline: none;
-            cursor: pointer;
-            transition: background-color 0.3s ease;
-            margin-right: 10px;
-        }
-
-        .toggle-switch input[type="checkbox"]:checked {
-            background-color: var(--accent-color);
-        }
-
-        .toggle-switch input[type="checkbox"]::before {
-            content: '';
-            position: absolute;
-            width: 18px;
-            height: 18px;
-            background-color: #fff;
+        .spinner {
+            width: 80px;
+            height: 80px;
+            border: 8px solid var(--spinner-border-color);
             border-radius: 50%;
-            top: 1px;
-            left: 1px;
-            transition: transform 0.3s ease;
+            border-top: 8px solid var(--spinner-border-top-color);
+            animation: spin 1s linear infinite;
         }
 
-        .toggle-switch input[type="checkbox"]:checked::before {
-            transform: translateX(20px);
+        @keyframes spin {
+            100% {
+                transform: rotate(360deg);
+            }
         }
+
+        .loading-text {
+            font-size: 1.125rem;
+            font-weight: 550;
+            color: var(--text-color);
+            padding-top: 16px;
+            font-family: 'Montserrat', sans-serif;
+        }
+
+        .loading-dots::after {
+            content: "";
+            animation: loadingDots 2s infinite steps(1);
+        }
+
+        @keyframes loadingDots {
+            0% {
+                content: "";
+            }
+            16.6% {
+                content: " .";
+            }
+            33.3% {
+                content: " . .";
+            }
+            50% {
+                content: " . . .";
+            }
+            66.6% {
+                content: " . .";
+            }
+            83.3% {
+                content: " .";
+            }
+            100% {
+                content: "";
+            }
+        }
+
     </style>
 </head>
 <body>
     <div id="loadingContainer"></div>
-
-    <!-- Toggle Switch for Dark Mode -->
-    <div class="toggle-switch">
-        <input type="checkbox" id="darkModeToggle">
-        <label for="darkModeToggle">Dark Mode</label>
-    </div>
-
     <div class="welcome-section">
         <h1 class="welcome-message">Welcome, <span id="user-name">{{ name }}</span>!</h1>
+        <!-- Theme Toggle Switch -->
+        <div class="theme-switch-wrapper">
+            <label class="theme-switch" for="theme-toggle">
+                <input type="checkbox" id="theme-toggle" />
+                <div class="slider round"></div>
+            </label>
+            <em>Toggle Light/Dark Theme</em>
+        </div>
     </div>
-
     <div class="space-y-8">
         <div class="card">
             <div class="card-header">
@@ -329,19 +507,35 @@
             </div>
         </div>
 
-        <!-- Past Wraps -->
-        <div class="stats-container">
-            <h3>Past Wraps</h3>
-            <div class="past-wraps-container">
-                {% if wraps %}
-                    {% for wrap in wraps %}
-                        <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
-                            Wrap #{{ forloop.counter }} ({{ wrap.created_at|date:"Y-m-d H:i" }}) ({{ wrap.get_wrap_type }})
-                        </a>
-                    {% endfor %}
-                {% else %}
-                    <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
-                {% endif %}
+        <!-- Duo-Wrapped -->
+        <div class="duo-grid">
+            <div class="stats-container">
+                <h3>Past Wraps</h3>
+                <div class="past-wraps-container">
+                    {% if wraps %}
+                        {% for wrap in wraps %}
+                            <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
+                                Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
+                    {% endif %}
+                </div>
+            </div>
+            <div class="stats-container">
+                <h3>Past Duo-Wraps</h3>
+                <div class="past-duo-wraps-container">
+                    {% if wraps %}
+                        {% for wrap in wraps %}
+                            <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
+                                {{ wrap }}
+                            </a>
+                        {% endfor %}
+                    {% else %}
+                        <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
+                    {% endif %}
+                </div>
             </div>
         </div>
 
@@ -364,37 +558,10 @@
             </div>
         </div>
     </div>
-
-    <!-- Include your scripts -->
     <script>
-        // Function to toggle dark mode
-        const toggleSwitch = document.getElementById('darkModeToggle');
-        const currentTheme = localStorage.getItem('theme');
-
-        if (currentTheme) {
-            document.body.classList.add(currentTheme);
-
-            if (currentTheme === 'light-mode') {
-                toggleSwitch.checked = false;
-            } else {
-                toggleSwitch.checked = true;
-            }
-        }
-
-        toggleSwitch.addEventListener('change', function() {
-            if (this.checked) {
-                document.body.classList.remove('light-mode');
-                localStorage.setItem('theme', 'dark-mode');
-            } else {
-                document.body.classList.add('light-mode');
-                localStorage.setItem('theme', 'light-mode');
-            }
-        });
-
-        // Your existing JavaScript functions
-        function generateNewWrap() {
+        function generateHolidayWrap(holiday) {
             toggleLoadingScreen();
-            const url = '/SpotifyWrappedApp/api/create_solowrap/';
+            const url = `/SpotifyWrappedApp/api/create_holidaywrap/${holiday}/`;
 
             fetch(url, {
                 method: 'POST',
@@ -414,9 +581,9 @@
             .catch(error => console.error('Error:', error));
         }
 
-        function generateHolidayWrap(holiday) {
+        function generateNewWrap() {
             toggleLoadingScreen();
-            const url = `/SpotifyWrappedApp/api/create_holidaywrap/${holiday}/`;
+            const url = '/SpotifyWrappedApp/api/create_solowrap/';
 
             fetch(url, {
                 method: 'POST',
@@ -441,15 +608,15 @@
         }
 
         function showDuoWrapped() {
-            // Your code...
+            // Implement this function as needed
         }
 
         function showSettings() {
-            // Your code...
+            // Implement this function as needed
         }
 
         function toggleLoadingScreen() {
-            const isLoading = true;
+            const isLoading = true; // Replace this with your condition
             const loadingContainer = document.getElementById('loadingContainer');
             if (isLoading) {
                 loadingContainer.innerHTML = `
@@ -464,6 +631,29 @@
                 loadingContainer.innerHTML = '';
             }
         }
+
+        // Theme Toggle Script
+        document.addEventListener('DOMContentLoaded', function() {
+            const toggleSwitch = document.getElementById('theme-toggle');
+            const currentTheme = localStorage.getItem('theme') ? localStorage.getItem('theme') : null;
+
+            if (currentTheme) {
+                if (currentTheme === 'light') {
+                    document.body.classList.add('light-mode');
+                    toggleSwitch.checked = true;
+                }
+            }
+
+            toggleSwitch.addEventListener('change', function(e) {
+                if (e.target.checked) {
+                    document.body.classList.add('light-mode');
+                    localStorage.setItem('theme', 'light');
+                } else {
+                    document.body.classList.remove('light-mode');
+                    localStorage.setItem('theme', 'dark');
+                }
+            });
+        });
     </script>
 </body>
 </html>
