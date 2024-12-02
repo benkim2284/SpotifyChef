@@ -2,8 +2,8 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Spotify Wrapped</title>
+    <!-- Font Awesome for icons -->
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <style>
         /* Reset and base styles */
@@ -13,12 +13,37 @@
             box-sizing: border-box;
         }
 
+        /* CSS Variables for theming */
+        :root {
+            --background-color: #121212;
+            --text-color: #ffffff;
+            --card-background: #1c1c1c;
+            --secondary-background: #282828;
+            --accent-color: #1DB954;
+            --hover-background: #1DB954;
+            --hover-text-color: #000000;
+            --link-text-color: #ffffff; /* Added variable for link text color in dark mode */
+        }
+
+        /* Light mode variables */
+        .light-mode {
+            --background-color: #f0f0f0;
+            --text-color: #000000;
+            --card-background: #ffffff;
+            --secondary-background: #e0e0e0;
+            --accent-color: #1DB954;
+            --hover-background: #1DB954;
+            --hover-text-color: #ffffff;
+            --link-text-color: #000000; /* Set link text color to black in light mode */
+        }
+
         body {
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
             line-height: 1.5;
             padding: 2rem;
-            background-color: #121212;
-            color: white;
+            background-color: var(--background-color);
+            color: var(--text-color);
+            transition: background-color 0.3s ease, color 0.3s ease;
         }
 
         .space-y-8 > * + * {
@@ -28,7 +53,7 @@
         .welcome-section {
             text-align: center;
             padding: 1.5rem;
-            background-color: #282828;
+            background-color: var(--secondary-background);
             border-radius: 1rem;
             margin-bottom: 1.5rem;
             box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
@@ -38,22 +63,16 @@
             font-size: 3rem;
             font-weight: 800;
             margin: 0;
-            color: #1DB954; /* Spotify green */
-        }
-
-        .welcome-subtitle {
-            font-size: 1rem;
-            margin-top: 0.5rem;
-            color: #b3b3b3;
+            color: var(--accent-color);
         }
 
         #user-name {
-            color: #1ED760; /* Slightly brighter green for the name */
+            color: #1ED760;
         }
 
         /* Card styles */
         .card {
-            background: #1c1c1c;
+            background: var(--card-background);
             border-radius: 1rem;
             box-shadow: 0 2px 6px rgba(0,0,0,0.1);
             overflow: hidden;
@@ -68,7 +87,7 @@
         .card-title {
             font-size: 1.5rem;
             font-weight: bold;
-            color: #1DB954;
+            color: var(--accent-color);
         }
 
         .card-content {
@@ -77,50 +96,6 @@
 
         .space-y-4 > * + * {
             margin-top: 1rem;
-        }
-
-        /* Landing page styles */
-        .hero-section {
-            height: 12rem;
-            background: linear-gradient(to right, #1DB954, #191414);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            border-radius: 1rem;
-            margin-bottom: 2rem;
-        }
-
-        .hero-title {
-            font-size: 3rem;
-            font-weight: bold;
-            color: white;
-        }
-
-        /* Button styles */
-        .button-container {
-            display: flex;
-            gap: 1rem;
-            justify-content: center;
-        }
-
-        .button {
-            padding: 0.8rem 1.5rem;
-            border-radius: 0.5rem;
-            font-weight: 500;
-            cursor: pointer;
-            border: none;
-            text-transform: uppercase;
-        }
-
-        .button-primary {
-            background-color: #1DB954;
-            color: white;
-        }
-
-        .button-outline {
-            background-color: transparent;
-            border: 1px solid #1DB954;
-            color: #1DB954;
         }
 
         /* Dashboard grid */
@@ -145,7 +120,7 @@
         .dashboard-card {
             padding: 1rem;
             text-align: center;
-            background-color: #333;
+            background-color: var(--card-background);
             border-radius: 0.5rem;
             box-shadow: 0 2px 4px rgba(0,0,0,0.2);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -161,66 +136,25 @@
             height: 2rem;
             margin-bottom: 0.5rem;
             display: inline-block;
+            color: var(--text-color);
         }
 
         .font-bold {
             font-weight: 700;
         }
 
-        /* Wrapped presentation */
-        .presentation-container {
-            position: relative;
-            height: 24rem;
-            background: linear-gradient(to right, #1DB954, #191414);
-            border-radius: 1rem;
-        }
-
-        .presentation-content {
-            position: absolute;
-            inset: 0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .slide-indicators {
-            display: flex;
-            gap: 0.5rem;
-            justify-content: center;
-        }
-
-        .indicator {
-            width: 0.5rem;
-            height: 0.5rem;
-            border-radius: 9999px;
-            background-color: white;
-        }
-
-        .indicator.inactive {
-            opacity: 0.5;
-        }
-
-        /* Duo-wrapped */
-        .duo-grid {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 1rem;
-        }
-
+        /* Stats container */
         .stats-container {
             padding: 1rem;
-            background-color: #333;
+            background-color: var(--card-background);
             border-radius: 0.5rem;
+            transition: background-color 0.3s ease;
         }
 
-        .stats-bar {
-            height: 1rem;
-            border-radius: 0.25rem;
-            margin-top: 0.5rem;
+        .stats-container:hover {
+            background-color: var(--secondary-background);
         }
 
-        /* Holiday themes */
-        /* Holiday themes */
         /* Holiday themes */
         .holiday-grid {
             display: grid;
@@ -236,6 +170,7 @@
             box-shadow: 0 4px 8px rgba(0,0,0,0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
             position: relative;
+            color: var(--text-color);
         }
 
         .holiday-card:hover {
@@ -256,12 +191,6 @@
             position: relative;
         }
 
-        .halloween h3 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
-
         .christmas {
             background: linear-gradient(135deg, #ff0000, #00b300);
             color: white;
@@ -270,67 +199,34 @@
             position: relative;
         }
 
-        .christmas h3 {
-            font-size: 1.5rem;
-            font-weight: bold;
-            letter-spacing: 0.5px;
-        }
-
-        /* Glow animation for Halloween */
+        /* Glow animations */
         @keyframes halloweenGlow {
-            0% {
-                background-position: 0% 50%;
-            }
-            100% {
-                background-position: 100% 50%;
-            }
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
-        /* Glow animation for Christmas */
         @keyframes christmasGlow {
-            0% {
-                background-position: 0% 50%;
-            }
-            100% {
-                background-position: 100% 50%;
-            }
-        }
-
-        .stats-container {
-            background-color: #2a2a2a;
-            border-radius: 0.75rem;
-            box-shadow: 0 2px 6px rgba(0, 0, 0, 0.2);
-            padding: 1rem;
-            overflow-y: auto;
-            max-height: 300px;
-            transition: background-color 0.3s ease;
-        }
-
-        .stats-container:hover {
-            background-color: #333;
+            0% { background-position: 0% 50%; }
+            100% { background-position: 100% 50%; }
         }
 
         /* Link styles */
-        .past-wrap-link, .past-duo-wrap-link {
+        .past-wrap-link {
             display: block;
             padding: 0.8rem 1rem;
             font-size: 1rem;
             font-weight: 500;
             text-decoration: none;
-            color: #fff;
+            color: var(--link-text-color); /* Updated to use the link text color variable */
             background-color: #1c1c1c;
             margin-bottom: 0.5rem;
             border-radius: 0.5rem;
             transition: background-color 0.3s ease, color 0.3s ease;
         }
 
-        .past-wrap-link:hover, .past-duo-wrap-link:hover {
-            background-color: #1DB954;
-            color: #000;
-        }
-
-        .past-wrap-link:active, .past-duo-wrap-link:active {
-            background-color: #14833b;
+        .past-wrap-link:hover {
+            background-color: var(--hover-background);
+            color: var(--hover-text-color);
         }
 
         /* Title styles */
@@ -338,25 +234,7 @@
             font-size: 1.25rem;
             font-weight: bold;
             margin-bottom: 1rem;
-            color: #1DB954;
-        }
-
-        /* Scrollbar styles */
-        .stats-container::-webkit-scrollbar {
-            width: 8px;
-        }
-
-        .stats-container::-webkit-scrollbar-thumb {
-            background-color: #1DB954;
-            border-radius: 8px;
-        }
-
-        .stats-container::-webkit-scrollbar-thumb:hover {
-            background-color: #14833b;
-        }
-
-        .stats-container::-webkit-scrollbar-track {
-            background-color: #1c1c1c;
+            color: var(--accent-color);
         }
 
         .no-wraps-message {
@@ -365,158 +243,65 @@
             font-weight: 700;
         }
 
-
-
-        .loading-popup {
-          position: fixed;
-          top: 0;
-          left: 0;
-          width: 100%;
-          height: 100%;
-          display: flex;
-          flex-direction: column;
-          justify-content: center;
-          align-items: center;
-          background-color: rgba(31, 31, 31, 0.9); /* Dark background with opacity */
-          z-index: 50;
+        /* Toggle Switch */
+        .toggle-switch {
+            position: absolute;
+            top: 20px;
+            right: 20px;
+            display: flex;
+            align-items: center;
+            font-size: 1rem;
+            cursor: pointer;
+            color: var(--text-color);
         }
 
-        .spinner {
-          width: 80px;
-          height: 80px;
-          border: 8px solid #1DB954; /* Spotify green */
-          border-radius: 50%;
-          border-top: 8px solid transparent;
-          animation: spin 1s linear infinite;
+        .toggle-switch input[type="checkbox"] {
+            appearance: none;
+            width: 40px;
+            height: 20px;
+            background-color: #ccc;
+            border-radius: 10px;
+            position: relative;
+            outline: none;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+            margin-right: 10px;
         }
 
-        @keyframes spin {
-          100% {
-            transform: rotate(360deg);
-          }
+        .toggle-switch input[type="checkbox"]:checked {
+            background-color: var(--accent-color);
         }
 
-        .loading-text {
-          font-size: 1.125rem; /* text-lg */
-          font-weight: 550; /* font-bold */
-          color: white;
-          padding-top: 16px; /* pt-4 */
-          font-family: 'Montserrat', sans-serif; /* Use Google Font if included */
+        .toggle-switch input[type="checkbox"]::before {
+            content: '';
+            position: absolute;
+            width: 18px;
+            height: 18px;
+            background-color: #fff;
+            border-radius: 50%;
+            top: 1px;
+            left: 1px;
+            transition: transform 0.3s ease;
         }
 
-        .loading-dots::after {
-          content: "";
-          animation: loadingDots 2s infinite steps(1);
+        .toggle-switch input[type="checkbox"]:checked::before {
+            transform: translateX(20px);
         }
-
-        @keyframes loadingDots {
-          0% {
-            content: "";
-          }
-          16.6% {
-            content: " .";
-          }
-          33.3% {
-            content: " . .";
-          }
-          50% {
-            content: " . . .";
-          }
-          66.6% {
-            content: " . .";
-          }
-          83.3% {
-            content: " .";
-          }
-          100% {
-            content: "";
-          }
-        }
-
     </style>
 </head>
-<script>
-    function generateHolidayWrap(holiday) {
-    toggleLoadingScreen();
-    const url = `/SpotifyWrappedApp/api/create_holidaywrap/${holiday}/`;
-
-    fetch(url, {
-        method: 'POST',
-        headers: {
-            'Content-Type': 'application/json',
-        }
-    })
-    .then(response => response.json())
-    .then(data => {
-        if (data.wrapped_id) {
-            console.log(data.wrapped_id)
-            window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
-        } else if (data.error) {
-            alert('Error: ' + data.error);
-        }
-    })
-    .catch(error => console.error('Error:', error));
-}
-
-    function generateNewWrap() {
-        toggleLoadingScreen();
-        const url = '/SpotifyWrappedApp/api/create_solowrap/';
-
-        fetch(url, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-            }
-        })
-        .then(response => response.json())
-        .then(data => {
-            if (data.wrapped_id) {
-                console.log(data.wrapped_id)
-                window.location.href = window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
-            } else if (data.error) {
-                alert('Error: ' + data.error);
-            }
-        })
-        .catch(error => console.error('Error:', error));
-    }
-
-    function NavigateToWrap(wrapped_id) {
-        window.location.href = window.location.href = `/SpotifyWrappedApp/wrapped/${wrapped_id}/`;
-    }
-
-    function showDuoWrapped() {
-
-    }
-
-    function showSettings() {
-
-    }
-
-
-    function toggleLoadingScreen() {
-        const isLoading = true; // Replace this with your condition
-        const loadingContainer = document.getElementById('loadingContainer');
-        if (isLoading) {
-        loadingContainer.innerHTML = `
-          <div class="loading-popup">
-            <div class="spinner"></div>
-            <div class="loading-text">
-              This may take a quick moment<span class="loading-dots"></span>
-            </div>
-          </div>
-        `;
-        } else {
-            loadingContainer.innerHTML = '';
-        }
-    }
-
-
-</script>
 <body>
-     <div id="loadingContainer"></div>
-     <div class="welcome-section">
+    <div id="loadingContainer"></div>
+
+    <!-- Toggle Switch for Dark Mode -->
+    <div class="toggle-switch">
+        <input type="checkbox" id="darkModeToggle">
+        <label for="darkModeToggle">Dark Mode</label>
+    </div>
+
+    <div class="welcome-section">
         <h1 class="welcome-message">Welcome, <span id="user-name">{{ name }}</span>!</h1>
     </div>
+
     <div class="space-y-8">
         <div class="card">
             <div class="card-header">
@@ -544,42 +329,22 @@
             </div>
         </div>
 
-        <!-- Duo-Wrapped -->
-        <div class="duo-grid">
-            <div class="stats-container">
-                <h3>Past Wraps</h3>
-                <div class="past-wraps-container">
-                    {% if wraps %}
-                        {% for wrap in wraps %}
-                            <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
-                                Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
-                            </a>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
-                    {% endif %}
-                </div>
-            </div>
-            <div class="stats-container">
-                <h3>Past Duo-Wraps</h3>
-                <div class="past-duo-wraps-container">
-                    {% if wraps %}
-                        {% for wrap in wraps %}
-                            <a href="#wrap-{{ forloop.counter }}" class="past-wrap-link">
-                                {{ wrap }}
-                            </a>
-                        {% endfor %}
-                    {% else %}
-                        <p class="no-wraps-message">No past duo-wraps exist. Choose a friend and create one!</p>
-                    {% endif %}
-                </div>
+        <!-- Past Wraps -->
+        <div class="stats-container">
+            <h3>Past Wraps</h3>
+            <div class="past-wraps-container">
+                {% if wraps %}
+                    {% for wrap in wraps %}
+                        <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
+                            Wrap #{{ forloop.counter }} ({{ wrap.created_at|date:"Y-m-d H:i" }}) ({{ wrap.get_wrap_type }})
+                        </a>
+                    {% endfor %}
+                {% else %}
+                    <p class="no-wraps-message">No past wraps exist. Create a wrap right now!</p>
+                {% endif %}
             </div>
         </div>
 
-
-
-
-        <!-- Holiday Themes -->
         <!-- Holiday Themes -->
         <div class="card">
             <div class="card-header">
@@ -587,17 +352,118 @@
             </div>
             <div class="card-content">
                 <div class="holiday-grid">
-<div class="card holiday-card halloween" onclick="generateHolidayWrap('halloween')">
-    <div class="emoji">🎃</div>
-    <h3 class="holiday-title">Halloween</h3>
-</div>
-<div class="card holiday-card christmas" onclick="generateHolidayWrap('christmas')">
-    <div class="emoji">🎄</div>
-    <h3 class="holiday-title">Christmas</h3>
-</div>
+                    <div class="card holiday-card halloween" onclick="generateHolidayWrap('halloween')">
+                        <div class="emoji">🎃</div>
+                        <h3 class="holiday-title">Halloween</h3>
+                    </div>
+                    <div class="card holiday-card christmas" onclick="generateHolidayWrap('christmas')">
+                        <div class="emoji">🎄</div>
+                        <h3 class="holiday-title">Christmas</h3>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <!-- Include your scripts -->
+    <script>
+        // Function to toggle dark mode
+        const toggleSwitch = document.getElementById('darkModeToggle');
+        const currentTheme = localStorage.getItem('theme');
+
+        if (currentTheme) {
+            document.body.classList.add(currentTheme);
+
+            if (currentTheme === 'light-mode') {
+                toggleSwitch.checked = false;
+            } else {
+                toggleSwitch.checked = true;
+            }
+        }
+
+        toggleSwitch.addEventListener('change', function() {
+            if (this.checked) {
+                document.body.classList.remove('light-mode');
+                localStorage.setItem('theme', 'dark-mode');
+            } else {
+                document.body.classList.add('light-mode');
+                localStorage.setItem('theme', 'light-mode');
+            }
+        });
+
+        // Your existing JavaScript functions
+        function generateNewWrap() {
+            toggleLoadingScreen();
+            const url = '/SpotifyWrappedApp/api/create_solowrap/';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.wrapped_id) {
+                    console.log(data.wrapped_id)
+                    window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function generateHolidayWrap(holiday) {
+            toggleLoadingScreen();
+            const url = `/SpotifyWrappedApp/api/create_holidaywrap/${holiday}/`;
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                }
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.wrapped_id) {
+                    console.log(data.wrapped_id)
+                    window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+
+        function NavigateToWrap(wrapped_id) {
+            window.location.href = `/SpotifyWrappedApp/wrapped/${wrapped_id}/`;
+        }
+
+        function showDuoWrapped() {
+            // Your code...
+        }
+
+        function showSettings() {
+            // Your code...
+        }
+
+        function toggleLoadingScreen() {
+            const isLoading = true;
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (isLoading) {
+                loadingContainer.innerHTML = `
+                    <div class="loading-popup">
+                        <div class="spinner"></div>
+                        <div class="loading-text">
+                            This may take a quick moment<span class="loading-dots"></span>
+                        </div>
+                    </div>
+                `;
+            } else {
+                loadingContainer.innerHTML = '';
+            }
+        }
+    </script>
 </body>
 </html>
