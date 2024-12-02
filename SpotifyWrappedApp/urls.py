@@ -16,5 +16,6 @@ urlpatterns = [
     path('friend_select/', views.friend_select_view, name='friend_select_view'),
     path('api/create_duowrap/', views.create_duowrap, name='create_duowrap'),
     path('duo_wrapped/<str:wrapped_id>/', views.duo_wrapped_view, name='duo_wrapped'),
-
+    path('api/create_holidaywrap/<str:holiday>/', views.create_holidaywrap, name='create_holidaywrap'),
+    path('guessTop/', views.guessTop, name='guessTop')
 ]

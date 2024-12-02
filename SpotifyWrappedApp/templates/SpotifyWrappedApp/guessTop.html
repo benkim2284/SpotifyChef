@@ -1,0 +1,158 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Guess the Song from the Album Art</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #121212;
+            color: white;
+            text-align: center;
+            padding: 2rem;
+        }
+
+        h1 {
+            color: #1DB954;
+        }
+
+        .album-art {
+            margin-top: 1rem;
+        }
+
+        .album-art img {
+            max-width: 300px;
+            border: 5px solid #1DB954;
+            border-radius: 10px;
+        }
+
+        .options {
+            margin-top: 2rem;
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            gap: 1rem;
+        }
+
+        .option {
+            background-color: #282828;
+            padding: 1rem 2rem;
+            border: 2px solid #1DB954;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+        }
+
+        .option:hover {
+            background-color: #1DB954;
+            color: #000;
+            transform: translateY(-5px);
+        }
+
+        .result {
+            margin-top: 2rem;
+            font-size: 1.5rem;
+        }
+
+        #next-button {
+            margin-top: 2rem;
+            padding: 1rem 2rem;
+            background-color: #1DB954;
+            border: none;
+            border-radius: 0.5rem;
+            color: #000;
+            font-size: 1rem;
+            cursor: pointer;
+            display: none;
+        }
+
+        #next-button:hover {
+            background-color: #1ed760;
+        }
+    </style>
+</head>
+<body>
+    <h1>Guess the Song from the Album Art</h1>
+    <p>Can you guess which song this album art belongs to?</p>
+
+    <div class="album-art">
+        <img id="album-art-image" src="" alt="Album Art">
+    </div>
+
+    <div class="options" id="options-container">
+        <!-- Options will be inserted here by JavaScript -->
+    </div>
+
+    <div class="result" id="result"></div>
+
+    <button id="next-button" onclick="startGame()">Next Song</button>
+
+    <script>
+        const tracks = {{ tracks_json|safe }};
+        let remainingTracks = [...tracks];
+
+        function shuffle(array) {
+            array.sort(() => Math.random() - 0.5);
+        }
+
+        function startGame() {
+            document.getElementById('result').innerText = '';
+            document.getElementById('next-button').style.display = 'none';
+
+            if (remainingTracks.length === 0) {
+                // Reset the game or inform the user
+                remainingTracks = [...tracks];
+                alert('You have guessed all songs! Starting over.');
+            }
+
+            // Select a random track
+            shuffle(remainingTracks);
+            const currentTrack = remainingTracks.pop();
+
+            // Update album art
+            const albumArtImage = document.getElementById('album-art-image');
+            albumArtImage.src = currentTrack.album_art_url;
+
+            // Prepare options
+            let options = [currentTrack.name];
+            const decoyTracks = tracks.filter(track => track.id !== currentTrack.id);
+            shuffle(decoyTracks);
+
+            // Add up to 3 decoy options
+            for (let i = 0; i < 3 && i < decoyTracks.length; i++) {
+                options.push(decoyTracks[i].name);
+            }
+
+            // Shuffle options
+            shuffle(options);
+
+            // Display options
+            const optionsContainer = document.getElementById('options-container');
+            optionsContainer.innerHTML = '';
+            options.forEach(option => {
+                const button = document.createElement('button');
+                button.className = 'option';
+                button.innerText = option;
+                button.onclick = () => checkAnswer(option, currentTrack.name);
+                optionsContainer.appendChild(button);
+            });
+        }
+
+        function checkAnswer(selectedOption, correctAnswer) {
+            const resultDiv = document.getElementById('result');
+            if (selectedOption === correctAnswer) {
+                resultDiv.innerHTML = `<span style="color: #1DB954;">Correct! The song is "${correctAnswer}"!</span>`;
+                document.getElementById('next-button').style.display = 'inline-block';
+                // Disable options
+                const buttons = document.querySelectorAll('.option');
+                buttons.forEach(button => button.disabled = true);
+            } else {
+                resultDiv.innerHTML = `<span style="color: red;">Wrong! Try again!</span>`;
+            }
+        }
+
+        // Start the game on page load
+        window.onload = startGame;
+    </script>
+</body>
+</html>
