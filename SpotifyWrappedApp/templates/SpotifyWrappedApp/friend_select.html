@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Select a Friend</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            background-color: #121212;
+            color: white;
+            padding: 2rem;
+        }
+
+        .container {
+            max-width: 600px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background-color: #282828;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px rgba(0, 0, 0, 0.3);
+        }
+
+        h1 {
+            text-align: center;
+            color: #1DB954;
+        }
+
+        .user-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .user-item {
+            padding: 1rem;
+            background-color: #333;
+            margin-bottom: 0.5rem;
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .user-name {
+            font-weight: bold;
+        }
+
+        .submit-container {
+            text-align: center;
+            margin-top: 1.5rem;
+        }
+
+        .submit-button {
+            background-color: #1DB954;
+            color: white;
+            border: none;
+            padding: 0.8rem 1.5rem;
+            border-radius: 0.5rem;
+            cursor: pointer;
+            font-weight: bold;
+            font-size: 1rem;
+        }
+
+        .submit-button:hover {
+            background-color: #14833b;
+        }
+    </style>
+    <script>
+        function toggleLoadingScreen() {
+            const isLoading = true; // Replace this with your condition
+            const loadingContainer = document.getElementById('loadingContainer');
+            if (isLoading) {
+            loadingContainer.innerHTML = `
+              <div class="loading-popup">
+                <div class="spinner"></div>
+                <div class="loading-text">
+                  This may take a quick moment<span class="loading-dots"></span>
+                </div>
+              </div>
+            `;
+            } else {
+                loadingContainer.innerHTML = '';
+            }
+        }
+
+        function generateNewDuoWrap() {
+            //toggleLoadingScreen();
+            const selectedFriendId = document.querySelector('input[name="selected_friend"]:checked').value;
+            const url = '/SpotifyWrappedApp/api/create_duowrap/';
+
+            fetch(url, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({
+                    selected_friend: selectedFriendId
+                })
+            })
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok');
+                }
+                return response.json();
+            })
+            .then(data => {
+                if (data.wrapped_id) {
+                    console.log(data.wrapped_id);
+                    window.location.href = `/SpotifyWrappedApp/duo_wrapped/${data.wrapped_id}/`;
+                } else if (data.error) {
+                    alert('Error: ' + data.error);
+                }
+            })
+            .catch(error => console.error('Error:', error));
+        }
+    </script>
+</head>
+<body>
+    <div class="container">
+        <h1>Select a Friend</h1>
+        <form onsubmit="event.preventDefault(); generateNewDuoWrap();">
+            <ul class="user-list">
+                {% for user in users %}
+                <li class="user-item">
+                    <span class="user-name">{{ user.name }}</span>
+                    <input type="radio" name="selected_friend" value="{{ user.id }}" required>
+                </li>
+                {% endfor %}
+            </ul>
+            <div class="submit-container">
+                <button type="submit" class="submit-button">Create Duo-Wrap</button>
+            </div>
+        </form>
+    </div>
+</body>
+</html>

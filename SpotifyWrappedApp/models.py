@@ -26,3 +26,12 @@ class SoloWraps(models.Model):
         return self.unique_id
 
 
+class DuoWraps(models.Model):
+    unique_id = models.CharField(max_length=36, default=generate_unique_id, editable=False, unique=True)
+    user_1 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='duo_wraps_1')
+    user_2 = models.ForeignKey(User, on_delete=models.CASCADE, related_name='duo_wraps_2')
+    wrap_data = models.JSONField()
+    created_at = models.DateTimeField(default=timezone.now)
+
+    def __str__(self):
+        return f"{self.user_1.name} & {self.user_2.name} DuoWrap"

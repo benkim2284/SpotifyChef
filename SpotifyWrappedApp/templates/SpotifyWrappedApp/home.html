@@ -183,7 +183,7 @@
         /* Dashboard grid */
         .dashboard-grid {
             display: grid;
-            grid-template-columns: repeat(1, 1fr);
+            grid-template-columns: 1fr;
             gap: 1rem;
         }
 
@@ -484,6 +484,10 @@
             }
         }
 
+    function selectFriend() {
+        window.location.href = '/SpotifyWrappedApp/friend_select/';
+    }
+
         /* Theme Switch Styles */
         .theme-switch-wrapper {
             display: flex;
@@ -573,13 +577,9 @@
                         <i class="icon fas fa-music"></i>
                         <h3 class="font-bold">Generate New Wrap</h3>
                     </div>
-                    <div class="card dashboard-card" onclick="showPastWraps()">
+                    <div class="card dashboard-card" onclick="selectFriend()">
                         <i class="icon fas fa-user"></i>
-                        <h3 class="font-bold">Generate Duo-Wrap</h3>
-                    </div>
-                    <div class="card dashboard-card" onclick="showDuoWrapped()">
-                        <i class="icon fas fa-share-alt"></i>
-                        <h3 class="font-bold">Duo-Wrapped</h3>
+                        <h3 class="font-bold">Select Friend for Duo-Wrap</h3>
                     </div>
                     <div class="card dashboard-card" onclick="showSettings()">
                         <i class="icon fas fa-cog"></i>
@@ -600,7 +600,7 @@
                 <div class="past-wraps-container">
                     {% if wraps %}
                         {% for wrap in wraps %}
-                            <a class="past-wrap-link" onclick="NavigateToWrap('{{ wrap.unique_id }}')">
+                            <a class="past-wrap-link" onclick="generateNewDuoWrap('{{ wrap.unique_id }}')">
                                 Wrap #{{ forloop.revcounter }} ({{ wrap.created_at }})
                             </a>
                         {% endfor %}
