@@ -436,6 +436,28 @@
     </style>
 </head>
 <script>
+    function generateHolidayWrap(holiday) {
+    toggleLoadingScreen();
+    const url = `/SpotifyWrappedApp/api/create_holidaywrap/${holiday}/`;
+
+    fetch(url, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    })
+    .then(response => response.json())
+    .then(data => {
+        if (data.wrapped_id) {
+            console.log(data.wrapped_id)
+            window.location.href = `/SpotifyWrappedApp/wrapped/${data.wrapped_id}/`;
+        } else if (data.error) {
+            alert('Error: ' + data.error);
+        }
+    })
+    .catch(error => console.error('Error:', error));
+}
+
     function generateNewWrap() {
         toggleLoadingScreen();
         const url = '/SpotifyWrappedApp/api/create_solowrap/';
@@ -565,14 +587,14 @@
             </div>
             <div class="card-content">
                 <div class="holiday-grid">
-                    <div class="card holiday-card halloween">
-                        <div class="emoji">🎃</div>
-                        <h3 class="holiday-title">Halloween</h3>
-                    </div>
-                    <div class="card holiday-card christmas">
-                        <div class="emoji">🎄</div>
-                        <h3 class="holiday-title">Christmas</h3>
-                    </div>
+<div class="card holiday-card halloween" onclick="generateHolidayWrap('halloween')">
+    <div class="emoji">🎃</div>
+    <h3 class="holiday-title">Halloween</h3>
+</div>
+<div class="card holiday-card christmas" onclick="generateHolidayWrap('christmas')">
+    <div class="emoji">🎄</div>
+    <h3 class="holiday-title">Christmas</h3>
+</div>
                 </div>
             </div>
         </div>
