@@ -180,7 +180,8 @@ def home_view(request):
         }
         response = requests.post(token_url, data=data, headers=headers)
         if response.status_code != 200:
-            return HttpResponseBadRequest("Could not retrieve access token.")
+            return redirect("/SpotifyWrappedApp/home")
+            # return HttpResponseBadRequest("Could not retrieve access token.")
         token_info = response.json()
         access_token = token_info['access_token']
         refresh_token = token_info['refresh_token']
