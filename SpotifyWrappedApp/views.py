@@ -72,6 +72,7 @@ def create_solowrap(request ):
 
                         Your output should be just the JSON and nothing else. Make sure to not start your response with '''json or anything.
                         It should start with just the json itself.
+                        Also include the last slide to dynamically describe how someone who listens to my kind of music tends to act/think/dress kind of like a horoscope.
                         """
             }
         ],
@@ -401,6 +402,7 @@ The track_info data for the user’s top 15 songs is: {existing_user.spotify_dat
 Your output should be just the JSON and nothing else. Make sure to not start your response with ```json or anything.
 It should start with just the JSON itself.
 If the JSON output has no christmas related songs however, ignore this and artificially populate the responses with random christmas songs.
+Also include the last slide to dynamically describe how someone who listens to my kind of music tends to act/think/dress kind of like a horoscope.
 """
     elif holiday.lower() == 'halloween':
         prompt = f"""Using the provided track_info data for the user's top 15 songs, generate content for 8 Spotify Wrapped slides with a Halloween theme.
@@ -412,6 +414,7 @@ The track_info data for the user’s top 15 songs is: {existing_user.spotify_dat
 Your output should be just the JSON and nothing else. Make sure to not start your response with ```json or anything.
 It should start with just the JSON itself.
 If the JSON output has no halloween related songs however, ignore this and artificially populate the responses with random haloween songs.
+Also include the last slide to dynamically describe how someone who listens to my kind of music tends to act/think/dress kind of like a horoscope.
 """
     else:
         return HttpResponseBadRequest("Invalid holiday.")
